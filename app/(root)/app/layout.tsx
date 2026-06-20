@@ -1,5 +1,6 @@
 import React from "react";
 import Sidebar from "@/components/application/sidebar/Sidebar";
+import Header from "@/components/application/header/Header";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -7,7 +8,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <aside className={`w-73.75 border-r pt-9`}>
         <Sidebar />
       </aside>
-      <main className={`px-9 pt-9`}>{children}</main>
+      <div className={`px-9 pt-9 w-full`}>
+        <Header />
+        <main>{children}</main>
+      </div>
     </div>
   );
 };
