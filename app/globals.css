@@ -46,16 +46,29 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Custom Colors */
+  --color-brand : var(--brand);
+  --color-brand-accent : var(--brand-accent);
+
+  --color-goal : var(--goal);
+  --color-goal-accent : var(--goal-accent);
+
+  --color-income: var(--income);
+  --color-income-hover: var(--income-hover);
+
+  --color-expense: var(--expense);
+  --color-expense-hover: var(--expense-hover);
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --background: oklch(0.9842 0.0034 247.86);
+  --foreground: oklch(0.252 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --primary: oklch(0.5854 0.2041 277.12);
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -81,12 +94,28 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+
+  /* Custom Colors */
+
+  --brand :oklch(0.5854 0.2041 277.12);
+  --brand-accent :oklch(0.9619 0.0179 272.31);
+
+  --income : oklch(0.7227 0.192 149.58);
+  --income-hover : oklch(0.6271 0.1699 149.21);
+
+  --goal : oklch(0.9052 0.1657 98.11);
+  --goal-accent : oklch(0.9873 0.0262 102.21);
+
+  --expense : oklch(0.6368 0.2078 25.33);
+  --expense-accent : oklch(0.9705 0.0129 17.38);
+  --expense-hover : oklch(0.5771 0.2152 27.33);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
+  --background: oklch(0.2077 0.0398 265.75);
+  --foreground: oklch(0.9288 0.0126 255.51);
+  --card: oklch(0.2795 0.0368 260.03);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
