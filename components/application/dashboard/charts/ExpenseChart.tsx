@@ -4,26 +4,56 @@ import {
   Bar,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
 } from "recharts";
 
-// نمونه داده‌ها
+import {
+  EllipsisVertical,
+  HandCoins,
+  UserIcon,
+  TrendingUpIcon,
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 const data = [
   { name: "Jan", pv: 2400, uv: 4000 },
   { name: "Feb", pv: 1398, uv: 3000 },
   { name: "Mar", pv: 9800, uv: 2000 },
   { name: "Apr", pv: 3908, uv: 2780 },
+  { name: "Mar", pv: 9800, uv: 2000 },
+  { name: "Apr", pv: 3908, uv: 2780 },
+  { name: "ss", pv: 9800, uv: 2000 },
+  { name: "A23", pv: 3908, uv: 2780 },
 ];
 
 export default function ExpenseChart() {
   return (
-    // استفاده از کلاس‌های متغیر دار Shadcn برای بک‌گراند و بوردر
     <div className="w-full max-w-full rounded-xl border border-border bg-card p-6 text-card-foreground shadow-sm">
-      <div className="mb-5">
-        <h3 className="text-lg font-semibold tracking-tight">Expense Chart</h3>
+      <div className="mb-7 flex justify-between">
+        <h5 className={"flex gap-4"}>
+          <span className={"text-expense"}>
+            <HandCoins />
+          </span>
+          <span>Monthly Expenses</span>
+        </h5>
+        <div className={"flex gap-8 items-center"}>
+          <p
+            className={`flex text-income gap-2 text-xs font-normal items-center`}
+          >
+            <span>
+              <TrendingUpIcon />
+            </span>
+            <span>6% more than last month</span>
+          </p>
+
+          <DropDownMenuChart />
+        </div>
       </div>
 
       <div className="h-55  w-full">
@@ -51,12 +81,21 @@ export default function ExpenseChart() {
             {/* کامپوننت Tooltip با کلاس‌های کامپوننت پاپ‌آپِ Shadcn */}
             <Tooltip
               contentStyle={{
-                backgroundColor: "var(--popover)",
+                backgroundColor: "var(--card)",
                 borderColor: "var(--border)",
                 borderRadius: "var(--radius)",
                 color: "var(--popover-foreground)",
               }}
               cursor={{ fill: "var(--muted)", opacity: 0.15 }}
+              labelStyle={{
+                color: "var(--muted-foreground)",
+                fontWeight: "600",
+                fontSize: "12px",
+              }}
+              itemStyle={{
+                color: "var(--foreground)" /* یا var(--card-foreground) */,
+                fontSize: "15px",
+              }}
             />
 
             {/* ستون اول: رنگ اصلی تم شما (Primary) */}
@@ -80,5 +119,24 @@ export default function ExpenseChart() {
         </ResponsiveContainer>
       </div>
     </div>
+  );
+}
+
+function DropDownMenuChart() {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className={`cursor-pointer hover:text-brand transition`}>
+          <EllipsisVertical size={18} />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align={"center"} className={"mx-1"}>
+        <DropdownMenuItem>Test</DropdownMenuItem>
+        <DropdownMenuItem>
+          <UserIcon />
+          Test
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
