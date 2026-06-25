@@ -3,8 +3,8 @@ import {
   WalletMinimal,
   TrendingUpIcon,
   TrendingDownIcon,
-  BanknoteArrowDown,
   BanknoteArrowUp,
+  HandCoins,
 } from "lucide-react";
 
 function Cards() {
@@ -23,14 +23,14 @@ function Cards() {
         type={"regularCard"}
         footer={"2% less than last month"}
         footerIcon={<TrendingUpIcon />}
-        icon={<BanknoteArrowDown />}
+        icon={<HandCoins />}
         header={"Monthly Expenses"}
         amount={473652.23}
         hasProfit
       />
       <CardsWrapper
         type={"regularCard"}
-        footer={"6% more less last month"}
+        footer={"6% more than last month"}
         footerIcon={<TrendingDownIcon />}
         icon={<BanknoteArrowUp />}
         header={"Monthly Incomes"}
