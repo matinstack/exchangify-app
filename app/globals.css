@@ -162,3 +162,9 @@
     @apply font-sans;
   }
 }
+
+@media (max-width: 1536px) {
+html {
+  font-size: 14px;
+}
+}
