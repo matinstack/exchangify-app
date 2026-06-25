@@ -27,7 +27,7 @@ function CardsWrapper(props: Card | GoalCard) {
 
       return (
         <li
-          className={`p-5 md:h-47.5 rounded-sm ${props.header === "Monthly Expenses" ? "from-expense-accent" : "from-brand-accent"} bg-linear-to-t  to-white shadow-sm flex flex-col justify-between`}
+          className={`p-5 md:h-45.5 rounded-sm ${props.header === "Monthly Expenses" ? "from-expense-accent" : "from-brand-accent"} bg-linear-to-t  to-white shadow-sm flex flex-col justify-between`}
         >
           <div className={"flex justify-between"}>
             <h5 className={"flex gap-4"}>
