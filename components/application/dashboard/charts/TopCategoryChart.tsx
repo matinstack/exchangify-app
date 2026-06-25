@@ -77,11 +77,9 @@ export default function TopCategoryChart() {
                   className="w-2 h-5 rounded-full shrink-0 mr-2"
                   style={{ backgroundColor: item.fill }}
                 />
-                <span className="font-medium text-foreground">{item.name}</span>
+                <span className="">{item.name}</span>
               </div>
-              <span className="text-muted-foreground font-mono text-sm">
-                $ {item.value}
-              </span>
+              <span className=" text-sm mr-2">$ {item.value}</span>
             </li>
           ))}
         </ul>
