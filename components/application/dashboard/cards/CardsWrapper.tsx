@@ -23,8 +23,6 @@ type GoalCard = {
 function CardsWrapper(props: Card | GoalCard) {
   switch (props.type) {
     case "regularCard":
-      console.log(props.icon);
-
       return (
         <li
           className={`p-5 md:h-45.5 rounded-md border border-border bg-card shadow-xs flex flex-col justify-between`}
