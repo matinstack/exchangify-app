@@ -9,7 +9,7 @@ import {
 
 function Cards() {
   return (
-    <ul className={"grid 2xl:grid-cols-4 xl:grid-cols-2  gap-11 mt-8"}>
+    <ul className={"grid 2xl:grid-cols-4 md:grid-cols-2  gap-11 mt-8"}>
       <CardsWrapper
         type={"regularCard"}
         footer={"6% more than last month"}
