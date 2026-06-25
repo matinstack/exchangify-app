@@ -1,4 +1,3 @@
-import DarkModeToggle from "@/components/shared/dark-mode-toggle";
 import { Button } from "@/components/ui/button";
 
 function MainPage() {
@@ -6,7 +5,6 @@ function MainPage() {
     <div>
       <Button>test</Button>
       Hello World
-      <DarkModeToggle />
     </div>
   );
 }

@@ -57,6 +57,7 @@
   --color-income-hover: var(--income-hover);
 
   --color-expense: var(--expense);
+  --color-expense-accent : var(--expense-accent);
   --color-expense-hover: var(--expense-hover);
 }
 
