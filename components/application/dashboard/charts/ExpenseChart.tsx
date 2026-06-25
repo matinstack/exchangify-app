@@ -63,9 +63,6 @@ export default function ExpenseChart() {
             margin={{ top: 10, right: 10, bottom: 0 }}
             barGap={6}
           >
-            {/* خطوط پس‌زمینه که با رنگ بوردر چادسی‌ان هماهنگه */}
-
-            {/* محورها با رنگ متن ثانویه سیستم (muted-foreground) */}
             <XAxis
               dataKey="name"
               tickLine={false}
@@ -78,7 +75,6 @@ export default function ExpenseChart() {
               className="text-xs fill-muted-foreground"
             />
 
-            {/* کامپوننت Tooltip با کلاس‌های کامپوننت پاپ‌آپِ Shadcn */}
             <Tooltip
               contentStyle={{
                 backgroundColor: "var(--card)",
@@ -93,12 +89,11 @@ export default function ExpenseChart() {
                 fontSize: "12px",
               }}
               itemStyle={{
-                color: "var(--foreground)" /* یا var(--card-foreground) */,
+                color: "var(--foreground)",
                 fontSize: "15px",
               }}
             />
 
-            {/* ستون اول: رنگ اصلی تم شما (Primary) */}
             <Bar
               dataKey="pv"
               className="fill-brand"
@@ -107,7 +102,6 @@ export default function ExpenseChart() {
               activeBar={{ opacity: 0.85 }}
             />
 
-            {/* ستون دوم: یک رنگ ثانویه جذاب (مثلا متمایز یا دایورسیفاید شده) */}
             <Bar
               dataKey="uv"
               fill="var(--chart-1, #06b6d4)"

@@ -6,13 +6,13 @@ import BillsTable from "@/components/application/dashboard/tables/BIllsTable";
 
 const Dashboard = () => {
   return (
-    <div>
+    <div className="flex flex-col gap-7 my-7">
       <Cards />
-      <div className={"grid xl:grid-cols-2 md:grid-cols-1  gap-11 sm:pt-9 "}>
+      <div className={"grid xl:grid-cols-2 md:grid-cols-1 gap-7"}>
         <ExpenseChart />
         <TopCategoryChart />
       </div>
-      <div className={"grid xl:grid-cols-6 w-full gap-11"}>
+      <div className={"grid xl:grid-cols-6 w-full gap-7"}>
         <div className={"xl:col-span-4"}>
           <RecentExpensesTable />
         </div>
