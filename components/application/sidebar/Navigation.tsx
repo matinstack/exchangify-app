@@ -20,9 +20,9 @@ const Navigation = ({ header, link, separator = true }: NavigationProps) => {
       <p className="text-sm pb-2 font-light text-gray-400">{header}</p>
       <ul className={`flex flex-col gap-2 `}>
         {link.map((link) => (
-          <li key={link.name}>
+          <li className={"min-w-52"} key={link.name}>
             <Link
-              className={`${pathname === link.href && "bg-brand-accent"} transition duration-200 pl-2 hover:bg-brand-accent group py-2 flex gap-3 items-center rounded-xs`}
+              className={`${pathname === link.href && "bg-brand-accent"} transition duration-200 px-2  hover:bg-brand-accent group py-2 flex gap-3 items-center rounded-xs`}
               href={link.href}
             >
               <span
