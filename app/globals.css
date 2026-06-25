@@ -168,3 +168,21 @@ html {
   font-size: 14px;
 }
 }
+
+@layer utilities {
+  @keyframes fadeInDown {
+    0% {
+      opacity: 0;
+      transform: translateY(-15px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in-down {
+    opacity: 0;
+    animation: fadeInDown 0.4s ease-out forwards;
+  }
+}
