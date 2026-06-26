@@ -1,6 +1,6 @@
 import { pgEnum, pgTable, text, uuid } from "drizzle-orm/pg-core";
 
-import { users } from "@/db/schema/users";
+import { user } from "@/db/schema/auth-schema";
 
 export const currencyEnum = pgEnum("currency", [
   "IRR", // Iranian Rial
@@ -15,7 +15,7 @@ export const languageEnum = pgEnum("language", ["en", "fa"]);
 
 export const userSettings = pgTable("user_settings", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("id").references(() => users.id),
+  userId: uuid("user_id").references(() => user.id),
   currency: currencyEnum("currency"),
   language: languageEnum("language").$default(() => "en"),
   timezone: text("timezone").notNull().default("Asia/Tehran"),

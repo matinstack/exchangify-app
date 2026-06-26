@@ -7,7 +7,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-import { users } from "@/db/schema/users";
+import { user } from "@/db/schema/auth-schema";
 
 export const activityActionEnum = pgEnum("activity_action", [
   "signup",
@@ -39,7 +39,7 @@ export const activityActionEnum = pgEnum("activity_action", [
 
 export const ActivityLog = pgTable("activity_log", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id").references(() => users.id),
+  userId: uuid("user_id").references(() => user.id),
   action: activityActionEnum("activity_action").notNull(),
   entityType: text("entity_type"),
   entityId: text("entity_id"),
