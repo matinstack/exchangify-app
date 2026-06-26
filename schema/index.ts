@@ -1,24 +1,13 @@
 import { z } from "zod";
 
-export const LoginSchema = z
-  .object({
-    email: z.email("Please enter a valid email address").trim(),
+export const LoginSchema = z.object({
+  email: z.email("Please enter a valid email address").trim(),
 
-    password: z
-      .string()
-      .trim()
-      .min(6, { message: "Password must be at least 6 characters long" }),
-
-    confirmPassword: z
-      .string()
-      .trim()
-      .min(1, { message: "Please confirm your password" }),
-  })
-
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+  password: z
+    .string()
+    .trim()
+    .min(6, { message: "Password must be at least 6 characters long" }),
+});
 
 const nameRegex = /^[A-Za-z\s'-]+$/;
 
