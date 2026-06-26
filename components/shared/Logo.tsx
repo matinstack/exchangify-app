@@ -1,10 +1,17 @@
 import Link from "next/link";
 import Image from "next/image";
+import { ComponentPropsWithoutRef } from "react";
+type LogoProps = {
+  href: string;
+} & ComponentPropsWithoutRef<"a">;
 
-function Logo({ isInApp }: { isInApp: boolean }) {
-  const href = isInApp ? "/" : "/";
+function Logo({ href, className, ...props }: LogoProps) {
   return (
-    <Link href={href} className="block w-32 h-8 overflow-hidden">
+    <Link
+      {...props}
+      href={href || "/"}
+      className={`block w-32 h-8 overflow-hidden ${className}`}
+    >
       <Image
         src="/logo-light.svg"
         alt="Expensly logo"

@@ -8,7 +8,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <div className={`flex bg-background min-h-screen `}>
       <aside className={`w-73.75 border-r pt-7`}>
         <div className={"ml-6 mb-9"}>
-          <Logo isInApp={true} />
+          <Logo href={"/app/dashboard"} />
         </div>
         <Sidebar />
       </aside>
