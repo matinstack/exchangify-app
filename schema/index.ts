@@ -1,13 +1,24 @@
 import { z } from "zod";
 
-export const LoginSchema = z.object({
-  email: z.email("Please enter a valid email address").trim(),
+export const LoginSchema = z
+  .object({
+    email: z.email("Please enter a valid email address").trim(),
 
-  password: z
-    .string()
-    .trim()
-    .min(6, { message: "Password must be at least 6 characters long" }),
-});
+    password: z
+      .string()
+      .trim()
+      .min(6, { message: "Password must be at least 6 characters long" }),
+
+    confirmPassword: z
+      .string()
+      .trim()
+      .min(1, { message: "Please confirm your password" }),
+  })
+
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
 const nameRegex = /^[A-Za-z\s'-]+$/;
 const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
@@ -23,7 +34,7 @@ export const RegisterSchema = z
         message: "First name must contain only English letters",
       }),
 
-    lastname: z
+    lastName: z
       .string()
       .trim()
       .min(1, { message: "Last name is required" })
@@ -52,3 +63,6 @@ export const RegisterSchema = z
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
+
+export type RegisterSchemaType = z.infer<typeof RegisterSchema>;
+export type LoginSchemaType = z.infer<typeof LoginSchema>;
