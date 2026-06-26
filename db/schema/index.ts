@@ -5,5 +5,5 @@ export * from "./depts";
 export * from "./goals";
 export * from "./notifications";
 export * from "./transactions";
-export * from "./users";
+export * from "./auth-schema";
 export * from "./userSettings";

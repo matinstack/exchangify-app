@@ -7,13 +7,13 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
-import { users } from "@/db/schema/users";
+import { user } from "@/db/schema/auth-schema";
 
 export const goalStatusEnum = pgEnum("goal_status", ["active", "paid"]);
 
 export const goals = pgTable("goals", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id").references(() => users.id),
+  userId: uuid("user_id").references(() => user.id),
   name: text("name").notNull(),
   targetAmount: numeric("target_amount", { precision: 14, scale: 2 }).notNull(),
   isPrimary: boolean("is_primary"),

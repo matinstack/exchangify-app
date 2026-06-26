@@ -7,7 +7,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-import { users } from "@/db/schema/users";
+import { user } from "@/db/schema/auth-schema";
 
 export const debtTypeEnum = pgEnum("debt_type", ["loan", "debt"]);
 export const debtStatusEnum = pgEnum("debt_status", ["active", "paid"]);
@@ -15,7 +15,7 @@ export const debtStatusEnum = pgEnum("debt_status", ["active", "paid"]);
 export const debts = pgTable("debts", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id")
-    .references(() => users.id)
+    .references(() => user.id)
     .notNull(),
   name: text("name"),
   deptType: debtTypeEnum("debt_type").notNull(),
