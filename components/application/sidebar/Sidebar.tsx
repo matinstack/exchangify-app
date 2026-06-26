@@ -72,11 +72,6 @@ const otherNavigationData = {
       href: "/app/settings",
       icon: <Settings size={20} />,
     },
-    {
-      name: "Log Out",
-      href: "/app/logout",
-      icon: <LogOut size={20} />,
-    },
   ],
 };
 

@@ -1,11 +1,29 @@
+"use client";
+import { authClient } from "@/lib/auth-client";
 import DarkModeToggle from "@/components/shared/dark-mode-toggle";
-const settingsPage = () => {
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+const SettingsPage = () => {
+  const router = useRouter();
   return (
     <div>
       SettingsPage
       <DarkModeToggle />
+      <Button
+        onClick={async () => {
+          await authClient.signOut({
+            fetchOptions: {
+              onSuccess: async () => {
+                router.push("/auth/login");
+              },
+            },
+          });
+        }}
+      >
+        Sign out
+      </Button>
     </div>
   );
 };
 
-export default settingsPage;
+export default SettingsPage;
