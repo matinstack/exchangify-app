@@ -14,8 +14,8 @@ export const debtStatusEnum = pgEnum("debt_status", ["active", "paid"]);
 
 export const debts = pgTable("debts", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id")
-    .references(() => user.id)
+  userId: text("user_id")
+    .references(() => user.id, { onDelete: "cascade" })
     .notNull(),
   name: text("name"),
   deptType: debtTypeEnum("debt_type").notNull(),

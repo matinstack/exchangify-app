@@ -17,7 +17,9 @@ export const typeEnum = pgEnum("card_type", [
 
 export const cards = pgTable("cards", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id").references(() => user.id, { onDelete: "cascade" }),
+  userId: text("user_id")
+    .references(() => user.id, { onDelete: "cascade" })
+    .notNull(),
   customName: text("custom_name"),
   bankName: text("bank_name").notNull(),
   balance: numeric("balance", { precision: 14, scale: 2 })

@@ -15,7 +15,9 @@ export const languageEnum = pgEnum("language", ["en", "fa"]);
 
 export const userSettings = pgTable("user_settings", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id").references(() => user.id),
+  userId: text("user_id")
+    .references(() => user.id, { onDelete: "cascade" })
+    .notNull(),
   currency: currencyEnum("currency"),
   language: languageEnum("language").$default(() => "en"),
   timezone: text("timezone").notNull().default("Asia/Tehran"),

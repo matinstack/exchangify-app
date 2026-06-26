@@ -39,7 +39,9 @@ export const activityActionEnum = pgEnum("activity_action", [
 
 export const ActivityLog = pgTable("activity_log", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id").references(() => user.id),
+  userId: text("user_id")
+    .references(() => user.id)
+    .notNull(),
   action: activityActionEnum("activity_action").notNull(),
   entityType: text("entity_type"),
   entityId: text("entity_id"),

@@ -13,7 +13,9 @@ export const goalStatusEnum = pgEnum("goal_status", ["active", "paid"]);
 
 export const goals = pgTable("goals", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id").references(() => user.id),
+  userId: text("user_id")
+    .references(() => user.id, { onDelete: "cascade" })
+    .notNull(),
   name: text("name").notNull(),
   targetAmount: numeric("target_amount", { precision: 14, scale: 2 }).notNull(),
   isPrimary: boolean("is_primary"),

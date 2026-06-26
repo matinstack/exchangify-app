@@ -21,7 +21,8 @@ export const LoginSchema = z
   });
 
 const nameRegex = /^[A-Za-z\s'-]+$/;
-const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
+
+const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&#]{8,}$/;
 
 export const RegisterSchema = z
   .object({
