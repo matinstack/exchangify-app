@@ -3,15 +3,19 @@ import HeaderTitle from "@/components/application/header/HeaderTitle";
 import TimeDate from "@/components/application/header/TimeDate";
 import Notifications from "@/components/application/header/Notifications";
 import UserProfile from "@/components/application/header/UserProfile";
+import { type AuthUser } from "@/types";
 
 type HeaderProps = {
-  userName?: string;
+  user: AuthUser;
 };
-const Header = ({ userName = "Matin" }: HeaderProps) => {
+const Header = ({ user }: HeaderProps) => {
+  const { name, image, id, lastName } = user;
   return (
     <header className={"flex justify-between"}>
       <div>
-        <h1 className=" mb-2 text-2xl font-normal">Welcome {userName} 👋</h1>
+        <h1 className=" mb-2 text-2xl font-normal">
+          Welcome {name} {lastName}. 👋
+        </h1>
         <HeaderTitle />
       </div>
       <div className={"flex gap-24"}>
