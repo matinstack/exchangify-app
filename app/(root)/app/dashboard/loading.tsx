@@ -1,5 +1,7 @@
+import DashboardSkeleton from "@/components/application/dashboard/DashboardSkeleton";
+
 function loading() {
-  return <div>Loading ...</div>;
+  return <DashboardSkeleton />;
 }
 
 export default loading;
