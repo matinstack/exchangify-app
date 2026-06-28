@@ -1,0 +1,1 @@
+ALTER TABLE "transactions" ADD COLUMN "amount" numeric(14, 2) NOT NULL;
