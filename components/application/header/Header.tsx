@@ -9,7 +9,7 @@ type HeaderProps = {
   user: AuthUser;
 };
 const Header = ({ user }: HeaderProps) => {
-  const { name, image, id, lastName } = user;
+  const { name, lastName } = user;
   return (
     <header className={"flex justify-between"}>
       <div>

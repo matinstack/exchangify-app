@@ -1,18 +1,12 @@
 "use client";
 import React from "react";
 import { usePathname } from "next/navigation";
+import { handleTitle } from "@/components/application/header/header-titles";
 
 const HeaderTitle = () => {
   const pathname = usePathname();
 
-  const handleTitle = () => {
-    switch (pathname) {
-      case "/app/dashboard":
-        return "Track all your expenses and transactions";
-    }
-  };
-
-  const title = handleTitle();
+  const title = handleTitle(pathname);
   return <p>{title}</p>;
 };
 
