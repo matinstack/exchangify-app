@@ -1,18 +1,29 @@
 import {
+  boolean,
   foreignKey,
   pgTable,
   text,
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
+import { user } from "@/db/schema/auth-schema";
+import { transactionTypeEnum } from "@/db/schema/transactions";
 
 export const categories = pgTable(
   "categories",
   {
     id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
+    type: transactionTypeEnum("type").notNull(),
+    icon: text("icon"),
+    isDefault: boolean("is_default").default(false).notNull(),
     parentId: uuid("parent_id"),
-    name: text("name"),
-    createdAt: timestamp("created_at"),
+    name: text("name").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
   },
   (table) => {
     return {
