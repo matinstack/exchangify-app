@@ -156,3 +156,31 @@ export const getMonthlyReportDataChart = async () => {
     throw err;
   }
 };
+
+export const getTopCategoryChartData = async () => {
+  const session = await getSession();
+  if (!session || !session.user.id) {
+    throw new Error("Unauthorized");
+  }
+  const { id } = session.user;
+
+  try {
+    return await db
+      .select({
+        category: categories.name,
+        totalAmount: sum(transactions.amount),
+      })
+      .from(transactions)
+      .leftJoin(categories, eq(transactions.categoryId, categories.id))
+      .where(
+        and(
+          eq(transactions.userId, id),
+          eq(transactions.transactionType, "expense"),
+        ),
+      )
+      .groupBy(categories.id, categories.name);
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+};
