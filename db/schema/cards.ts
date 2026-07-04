@@ -8,7 +8,7 @@ import {
   pgEnum,
 } from "drizzle-orm/pg-core";
 
-export const typeEnum = pgEnum("card_type", [
+export const cardTypeEnum = pgEnum("card_type", [
   "visa",
   "masterCard",
   "iranianBank",
@@ -24,7 +24,7 @@ export const cards = pgTable("cards", {
   balance: numeric("balance", { precision: 14, scale: 2 })
     .notNull()
     .default("0"),
-  type: typeEnum("card_type").notNull(),
+  type: cardTypeEnum("card_type").notNull(),
   cardNumber: text("card_number").unique().notNull(),
   cardColor: text("card_color").notNull(),
   currency: text("currency"),
