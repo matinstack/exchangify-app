@@ -12,7 +12,6 @@ export const typeEnum = pgEnum("card_type", [
   "visa",
   "masterCard",
   "iranianBank",
-  "cashWallet",
 ]);
 
 export const cards = pgTable("cards", {
@@ -26,6 +25,8 @@ export const cards = pgTable("cards", {
     .notNull()
     .default("0"),
   type: typeEnum("card_type").notNull(),
+  cardNumber: text("card_number").unique().notNull(),
+  cardColor: text("card_color").notNull(),
   currency: text("currency"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").$onUpdate(() => new Date()),
