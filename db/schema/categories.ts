@@ -8,6 +8,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { user } from "@/db/schema/auth-schema";
 import { transactionTypeEnum } from "@/db/schema/transactions";
+import { debts } from "@/db/schema/depts";
 
 export const categories = pgTable(
   "categories",
@@ -19,6 +20,9 @@ export const categories = pgTable(
     isDefault: boolean("is_default").default(false).notNull(),
     parentId: uuid("parent_id"),
     name: text("name").notNull(),
+    debtId: uuid("debt_id").references(() => debts.id, {
+      onDelete: "set null",
+    }),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
       .defaultNow()

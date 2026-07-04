@@ -8,6 +8,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { cards } from "@/db/schema/cards";
 import { user } from "@/db/schema/auth-schema";
+import { categories } from "@/db/schema/categories";
 
 export const transactionTypeEnum = pgEnum("transaction_type", [
   "income",
@@ -22,7 +23,12 @@ export const transactions = pgTable("transactions", {
     .references(() => cards.id, { onDelete: "cascade" }),
   amount: numeric("amount", { scale: 2, precision: 14 }).notNull(),
   transactionType: transactionTypeEnum("transaction_type").notNull(),
+  categoryId: uuid("category_id")
+    .references(() => categories.id, { onDelete: "set null" })
+    .notNull(),
   date: timestamp("date").notNull(),
+  note: text("note"),
+  description: text("description"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updated_at: timestamp("updated_at")
     .defaultNow()
