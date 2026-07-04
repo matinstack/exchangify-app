@@ -1,9 +1,7 @@
+import Cards from "@/components/application/cards/Cards";
+
 const cardsPage = () => {
-  return (
-    <div>
-      CardsPage
-    </div>
-  );
+  return <Cards />;
 };
 
 export default cardsPage;
