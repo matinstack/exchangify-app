@@ -8,7 +8,7 @@ export const LoginAction = async (values: LoginSchemaType) => {
 
   if (!validatedFields.success) {
     return {
-      error: "Invalid credentials",
+      error: "Invalid login credentials",
     };
   }
   const { email, password } = validatedFields.data;

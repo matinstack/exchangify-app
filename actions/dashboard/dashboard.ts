@@ -27,7 +27,7 @@ type Query = {
 export const getTransactions = async (query: Query) => {
   const session = await getSession();
   if (!session || !session.user.id) {
-    throw new Error("Unauthorized");
+    throw new Error("Unauthorized! Please login again.");
   }
   const { id } = session.user;
   const { sortBy, page, limit, type, order, dateFilter } = query;

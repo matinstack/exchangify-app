@@ -8,7 +8,7 @@ export const RegisterAction = async (values: RegisterSchemaType) => {
   const validatedFields = RegisterSchema.safeParse(values);
   if (!validatedFields.success) {
     return {
-      error: "Invalid login credentials",
+      error: "Invalid credentials",
     };
   }
   const { email, password, name, lastName } = validatedFields.data;

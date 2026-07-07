@@ -31,3 +31,5 @@ export const cards = pgTable("cards", {
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").$onUpdate(() => new Date()),
 });
+
+export type CardsType = typeof cards.$inferSelect;

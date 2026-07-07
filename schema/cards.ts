@@ -36,6 +36,7 @@ export const NewCardSchema = z.object({
 
   cardColor: z
     .string({ error: "Please pick a color" })
+    .min(1, { error: "Please pick a color" })
     .max(24, { error: "Invalid Input" })
     .trim(),
 });
