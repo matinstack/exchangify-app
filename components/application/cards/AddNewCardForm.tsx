@@ -32,6 +32,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { addNewCard } from "@/actions/cards/addNewCard";
 import { Spinner } from "@/components/ui/spinner";
+import FormSubmitButton from "@/components/shared/FormSubmitButton";
 const AddNewCardForm = () => {
   const [isOpen, setIsOpen] = useState(false);
   const {
@@ -92,7 +93,7 @@ const AddNewCardForm = () => {
         </DialogHeader>
         <div>
           <form
-            className="max-h-[95vh] overflow-y-auto pr-2 space-y-4"
+            className="max-h-[95vh] overflow-y-auto  px-2 space-y-4"
             onSubmit={handleSubmit(onSubmit)}
           >
             <FieldGroup>
@@ -112,6 +113,7 @@ const AddNewCardForm = () => {
                   </FieldDescription>
                 )}
               </Field>
+
               <Field data-invalid={!!errors.optionalName}>
                 <FieldLabel htmlFor="card-label">Card Label</FieldLabel>
                 <Input
@@ -240,10 +242,11 @@ const AddNewCardForm = () => {
               </Field>
 
               <Field className="pb-4">
-                <Button variant="default" type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? "Adding New Card..." : "Add New Card"}
-                  {isSubmitting && <Spinner />}
-                </Button>
+                <FormSubmitButton
+                  disabled={isSubmitting}
+                  text={"Add New Card"}
+                  loadingText={"Adding New Card..."}
+                />
               </Field>
             </FieldGroup>
           </form>
