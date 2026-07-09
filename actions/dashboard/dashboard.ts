@@ -5,7 +5,7 @@ import { db } from "@/db";
 import { cards, categories, transactions } from "@/db/schema";
 import { and, asc, desc, eq, count, between, sum, sql } from "drizzle-orm";
 
-type DateFilter =
+export type DateFilter =
   | "today"
   | "yesterday"
   | "thisWeek"
@@ -14,12 +14,12 @@ type DateFilter =
   | "lastMonth"
   | "thisYear";
 
-type Query = {
+export type Query = {
   search?: string;
   sortBy?: "date" | "amount";
   order?: "asc" | "desc";
-  page?: number;
-  limit?: number;
+  page?: string;
+  limit?: string;
   type?: "expense" | "income";
   dateFilter?: DateFilter;
 };
@@ -39,8 +39,8 @@ export const getTransactions = async (query: Query) => {
 
   //  Dynamic Query Building
 
-  const currentPage = page ?? 1;
-  const pageSize = limit ?? 10;
+  const currentPage = Number(page) ?? 1;
+  const pageSize = Number(limit) ?? 10;
 
   const offset = (currentPage - 1) * pageSize;
   const sortColumn = sortableColumns[sortBy ?? "date"];
@@ -74,6 +74,7 @@ export const getTransactions = async (query: Query) => {
           amount: transactions.amount,
           type: transactions.transactionType,
           bankName: cards.bankName,
+          cardNumber: cards.cardNumber,
           category: categories.name,
           subCategory: categories.parentId,
           date: transactions.date,

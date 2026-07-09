@@ -6,7 +6,7 @@ import {
 import { getSession } from "@/lib/auth-helpers";
 import { db } from "@/db";
 import { categories } from "@/db/schema";
-import { and, eq, ilike } from "drizzle-orm";
+import { and, eq, ilike, or } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 export const createCategory = async (values: CreateCategoryType) => {
   const session = await getSession();
@@ -27,7 +27,12 @@ export const createCategory = async (values: CreateCategoryType) => {
     const [category] = await db
       .select()
       .from(categories)
-      .where(and(ilike(categories.name, name), eq(categories.userId, id)))
+      .where(
+        and(
+          ilike(categories.name, name),
+          or(eq(categories.userId, id), eq(categories.isDefault, true)),
+        ),
+      )
       .limit(1);
 
     if (category) {
@@ -42,11 +47,12 @@ export const createCategory = async (values: CreateCategoryType) => {
       imageUrl = "https://example.com/path-to-image.png";
     }
 
+    // TODO FIx userID after adding default Categories
     await db.insert(categories).values({
-      userId: id,
+      userId: null,
       name,
       parentId: parentId ?? null,
-      isDefault: false,
+      isDefault: true,
       icon: imageUrl ?? null,
       type: categoryType,
     });

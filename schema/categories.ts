@@ -20,19 +20,20 @@ export const createCategorySchema = z.object({
     .max(32, { error: "Too many characters" })
     .trim(),
 
-  icon: z
-    .preprocess(
-      (val) => (val instanceof FileList ? val[0] : val),
-      z.instanceof(File).optional(),
-    )
-    .refine(
-      (file) => !file || file.size <= MAX_FILE_SIZE,
-      "Max file size is 2MB.",
-    )
-    .refine(
-      (file) => !file || ACCEPTED_IMAGE_TYPES.includes(file.type),
-      "Only .jpg, .jpeg, .png and .webp formats are supported.",
-    ),
+  icon: z.any().optional(),
+  // icon: z
+  //   .preprocess(
+  //     (val) => (val instanceof FileList ? val[0] : val),
+  //     z.instanceof(File).optional(),
+  //   )
+  //   .refine(
+  //     (file) => !file || file.size <= MAX_FILE_SIZE,
+  //     "Max file size is 2MB.",
+  //   )
+  //   .refine(
+  //     (file) => !file || ACCEPTED_IMAGE_TYPES.includes(file.type),
+  //     "Only .jpg, .jpeg, .png and .webp formats are supported.",
+  //   ),
 });
 
 export type CreateCategoryType = z.input<typeof createCategorySchema>;
