@@ -14,6 +14,14 @@ export const cardTypeEnum = pgEnum("card_type", [
   "iranianBank",
 ]);
 
+export const currencyEnum = pgEnum("currency", [
+  "IRR", // ریال ایران
+  "EUR", // یورو
+  "USD", // دلار آمریکا
+  "GBP", // پوند
+  "AED", // درهم امارات
+  "TRY", // لیر ترکیه
+]);
 export const cards = pgTable("cards", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: text("user_id")
@@ -27,7 +35,7 @@ export const cards = pgTable("cards", {
   type: cardTypeEnum("card_type").notNull(),
   cardNumber: text("card_number").unique().notNull(),
   cardColor: text("card_color").notNull(),
-  currency: text("currency"),
+  currency: currencyEnum("currency").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").$onUpdate(() => new Date()),
 });

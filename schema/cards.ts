@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { cardTypeEnum } from "@/db/schema";
+import { cardTypeEnum, currencyEnum } from "@/db/schema";
 import { LoginSchema, RegisterSchema } from "@/schema/index";
 
 const cardNumberRegax = /^[0-9]+$/;
@@ -32,7 +32,12 @@ export const NewCardSchema = z.object({
     })
     .trim(),
 
-  currency: z.enum(cardTypeEnum.enumValues),
+  cardType: z.enum(cardTypeEnum.enumValues, {
+    error: "please Select Your Card Type",
+  }),
+  currency: z.enum(currencyEnum.enumValues, {
+    error: "please Select Your Currency Type",
+  }),
 
   cardColor: z
     .string({ error: "Please pick a color" })
