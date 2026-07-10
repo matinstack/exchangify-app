@@ -4,7 +4,8 @@ import { getSession } from "@/lib/auth-helpers";
 import { db } from "@/db";
 import { cards, categories, transactions } from "@/db/schema";
 import { and, asc, desc, eq, count, between, sum, sql } from "drizzle-orm";
-
+import { alias } from "drizzle-orm/pg-core";
+const parentCategory = alias(categories, "parentCategory");
 export type DateFilter =
   | "today"
   | "yesterday"
@@ -39,8 +40,8 @@ export const getTransactions = async (query: Query) => {
 
   //  Dynamic Query Building
 
-  const currentPage = Number(page) ?? 1;
-  const pageSize = Number(limit) ?? 10;
+  const currentPage = page ? Number(page) : 1;
+  const pageSize = limit ? Number(limit) : 10;
 
   const offset = (currentPage - 1) * pageSize;
   const sortColumn = sortableColumns[sortBy ?? "date"];
@@ -75,14 +76,15 @@ export const getTransactions = async (query: Query) => {
           type: transactions.transactionType,
           bankName: cards.bankName,
           cardNumber: cards.cardNumber,
-          category: categories.name,
-          subCategory: categories.parentId,
+          category: parentCategory.name,
+          subCategory: categories.name,
           date: transactions.date,
         })
         .from(transactions)
         .where(and(...conditions))
         .orderBy(orderFn(sortColumn))
         .leftJoin(categories, eq(transactions.categoryId, categories.id))
+        .leftJoin(parentCategory, eq(categories.parentId, parentCategory.id))
         .leftJoin(cards, eq(transactions.cardId, cards.id))
         .limit(pageSize)
         .offset(offset),
