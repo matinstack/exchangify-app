@@ -4,6 +4,7 @@ import { getSession } from "@/lib/auth-helpers";
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
 import { cards } from "@/db/schema";
+import { updateTag } from "next/cache";
 
 export const addNewCard = async (values: NewCardSchemaType) => {
   const session = await getSession();
@@ -50,6 +51,8 @@ export const addNewCard = async (values: NewCardSchemaType) => {
       type: cardType,
       currency,
     });
+
+    updateTag(`cards:${session.user.id}`);
 
     return { success: "Card added successfully!" };
   } catch (err) {
