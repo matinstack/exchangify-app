@@ -1,4 +1,4 @@
-import { type Query } from "@/actions/dashboard/dashboard";
+import { type Query } from "@/actions/transactions/transactions";
 import TransactionComponent from "@/components/application/transactions/TransactionComponent";
 import { Suspense } from "react";
 type Props = {

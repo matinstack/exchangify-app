@@ -1,3 +1,10 @@
+import { format } from "date-fns";
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
   Table,
   TableBody,
@@ -7,12 +14,17 @@ import {
   TableRow,
   TableCaption,
 } from "@/components/ui/table";
-
+import { MoveDownLeft, MoveUpRight } from "lucide-react";
 import TransactionsHeader from "@/components/application/transactions/TransactionsHeader";
+import { Button } from "@/components/ui/button";
+import { EllipsisVertical } from "lucide-react";
+import CardNumber from "@/components/application/transactions/CardNumber";
+import TransactionsPagination from "@/components/application/transactions/TransactionsPagination";
 
 export type TransactionItem = {
   id: string;
   amount: string;
+  note: string | null;
   type: "expense" | "income";
   bankName: string | null;
   cardNumber: string | null;
@@ -42,28 +54,83 @@ const Transactions = ({ data, pagination }: GetTransactionsResponse) => {
         <TableHeader>
           <TableRow>
             <TableHead>Type</TableHead>
-            <TableHead>Amount</TableHead>
             <TableHead>Category</TableHead>
-            <TableHead>Card</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead className="text-right">Action</TableHead>
+            <TableHead>Amount</TableHead>
+            <TableHead className="w-[20%]">Card</TableHead>
+            <TableHead className="w-[18%]">Note</TableHead>
+            <TableHead className="w-[10%]">Date</TableHead>
+            <TableHead className="text-right max-w-12">Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.length > 0
-            ? data.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell>{item.type}</TableCell>
-                  <TableCell>test</TableCell>
-                  <TableCell>test</TableCell>
-                  <TableCell>test</TableCell>
-                  <TableCell>test</TableCell>
-                </TableRow>
-              ))
+            ? data.map((item) => {
+                const isExpense = item.type === "expense";
+                return (
+                  <TableRow key={item.id}>
+                    <TableCell>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div
+                            className={`${isExpense ? "bg-expense/5" : "bg-income/5"} w-9 h-9 flex justify-center items-center rounded-full border border-border`}
+                          >
+                            {isExpense ? (
+                              <MoveDownLeft
+                                className="text-expense"
+                                size={18}
+                              />
+                            ) : (
+                              <MoveUpRight className="text-income" size={18} />
+                            )}
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {item.type &&
+                            item.type.charAt(0).toUpperCase() +
+                              item.type.slice(1)}
+                        </TooltipContent>
+                      </Tooltip>
+                    </TableCell>
+
+                    <TableCell>
+                      <p>{item.subCategory}</p>
+                      <p className={"text-xs text-foreground/40"}>
+                        {item.category}
+                      </p>
+                    </TableCell>
+                    <TableCell
+                      className={`font-semibold ${!isExpense && "text-income"}`}
+                    >
+                      {isExpense ? "-" : "+"}
+                      {item.amount}
+                    </TableCell>
+                    <TableCell>
+                      <p>{item.bankName}</p>
+                      <p>
+                        <CardNumber card={item.cardNumber!} />
+                      </p>
+                    </TableCell>
+                    <TableCell>{item.note || "-"}</TableCell>
+
+                    <TableCell className="whitespace-nowrap">
+                      <p>{item.date.toDateString()}</p>
+                      <p className="text-xs text-foreground/40">
+                        {format(item.date, "HH:mm")}
+                      </p>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="ghost">
+                        <EllipsisVertical />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
             : ""}
           <TableRow></TableRow>
         </TableBody>
       </Table>
+      <TransactionsPagination pagination={pagination} />
     </div>
   );
 };

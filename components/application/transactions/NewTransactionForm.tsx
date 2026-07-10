@@ -10,8 +10,6 @@ import {
   Field,
   FieldGroup,
   FieldLabel,
-  FieldTitle,
-  FieldDescription,
   FieldError,
 } from "@/components/ui/field";
 import {
@@ -26,6 +24,8 @@ import {
 import { Input } from "@/components/ui/input";
 import FormSubmitButton from "@/components/shared/FormSubmitButton";
 import { Textarea } from "@/components/ui/textarea";
+import { newTransaction } from "@/actions/transactions/transactions";
+import { toast } from "sonner";
 
 const NewTransactionForm = ({
   categories,
@@ -75,10 +75,15 @@ const NewTransactionForm = ({
   );
 
   const onSubmit = async (values: NewTransactionsType) => {
-    console.log(values);
+    const res = await newTransaction(values);
+
+    if (res.error) {
+      toast.error(res.error, { position: "top-center" });
+      return;
+    }
+    toast.success(res.success, { position: "top-center" });
   };
 
-  console.log(categories, subCategories, cards);
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <FieldGroup className="grid grid-cols-1 gap-4 md:grid-cols-2">
