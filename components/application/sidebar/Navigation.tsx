@@ -14,7 +14,6 @@ type NavigationProps = {
 };
 const Navigation = ({ header, link, separator = true }: NavigationProps) => {
   const pathname = usePathname();
-  console.log(pathname);
   return (
     <div className={`mx-6 pb-3 mb-4 ${separator ? "border-b" : ""}`}>
       <p className="text-sm pb-2 font-light text-gray-400">{header}</p>

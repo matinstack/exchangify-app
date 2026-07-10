@@ -8,7 +8,7 @@ const Cards = async () => {
   if (!session) redirect("/auth/login");
   const cards = await getCardsById(session.user?.id);
   return (
-    <div className="">
+    <div>
       <CardsSlider cardsArray={cards} />
     </div>
   );
