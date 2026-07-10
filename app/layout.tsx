@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import ThemeProvider from "@/app/_providers/ThemeProvider";
 import ToasterProvider from "@/app/_providers/ToasterProvider";
+import TooltipProvider from "@/app/_providers/TooltipProvider";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -35,7 +36,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <TooltipProvider>{children}</TooltipProvider>
         </ThemeProvider>
         <ToasterProvider />
       </body>
