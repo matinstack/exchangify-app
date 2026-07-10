@@ -1,7 +1,7 @@
 import Transactions from "@/components/application/transactions/Transactions";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth-helpers";
-import { getTransactions, Query } from "@/actions/dashboard/dashboard";
+import { getTransactions, Query } from "@/actions/transactions/transactions";
 
 type Props = {
   searchParams: Promise<Query>;
