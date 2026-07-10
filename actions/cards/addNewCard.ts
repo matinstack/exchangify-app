@@ -4,7 +4,6 @@ import { getSession } from "@/lib/auth-helpers";
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
 import { cards } from "@/db/schema";
-import { revalidatePath } from "next/cache";
 
 export const addNewCard = async (values: NewCardSchemaType) => {
   const session = await getSession();
@@ -12,7 +11,7 @@ export const addNewCard = async (values: NewCardSchemaType) => {
   if (!session || !session.user.id) {
     throw new Error("Unauthorized! Please login again.");
   }
-
+  // ُTODO: Balance Too large Number BUG
   const validatedFields = NewCardSchema.safeParse(values);
 
   if (!validatedFields.success) {
@@ -20,8 +19,15 @@ export const addNewCard = async (values: NewCardSchemaType) => {
       error: "Invalid Fields!",
     };
   }
-  const { cardNumber, cardColor, balance, bankName, optionalName, currency } =
-    validatedFields.data;
+  const {
+    cardNumber,
+    cardColor,
+    balance,
+    bankName,
+    optionalName,
+    currency,
+    cardType,
+  } = validatedFields.data;
 
   const existingCard = await db
     .select({ id: cards.id })
@@ -41,9 +47,9 @@ export const addNewCard = async (values: NewCardSchemaType) => {
       bankName,
       balance,
       customName: optionalName,
-      type: currency,
+      type: cardType,
+      currency,
     });
-    revalidatePath("/app");
 
     return { success: "Card added successfully!" };
   } catch (err) {
