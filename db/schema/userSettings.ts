@@ -1,15 +1,7 @@
 import { pgEnum, pgTable, text, uuid } from "drizzle-orm/pg-core";
 
 import { user } from "@/db/schema/auth-schema";
-
-export const currencyEnum = pgEnum("currency", [
-  "IRR", // Iranian Rial
-  "USD", // US Dollar
-  "EUR", // Euro
-  "GBP", // British Pound
-  "AED", // UAE Dir-ham
-  "TRY", // Turkish Lira
-]);
+import { currencyEnum } from "@/db/schema/cards";
 
 export const languageEnum = pgEnum("language", ["en", "fa"]);
 

@@ -11,7 +11,7 @@ import { revalidatePath } from "next/cache";
 export const createCategory = async (values: CreateCategoryType) => {
   const session = await getSession();
   if (!session || !session.user.id) {
-    throw new Error("Unathorized");
+    throw new Error("Unauthorized");
   }
   const { id } = session.user;
 
@@ -47,9 +47,8 @@ export const createCategory = async (values: CreateCategoryType) => {
       imageUrl = "https://example.com/path-to-image.png";
     }
 
-    // TODO FIx userID after adding default Categories
     await db.insert(categories).values({
-      userId: null,
+      userId: id,
       name,
       parentId: parentId ?? null,
       isDefault: true,
