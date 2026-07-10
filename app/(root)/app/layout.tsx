@@ -1,14 +1,9 @@
-import React from "react";
+import React, { Suspense } from "react";
 import Sidebar from "@/components/application/sidebar/Sidebar";
 import Header from "@/components/application/header/Header";
 import Logo from "@/components/shared/Logo";
-import { getSession } from "@/lib/auth-helpers";
-import { redirect } from "next/navigation";
 
-const Layout = async ({ children }: { children: React.ReactNode }) => {
-  const session = await getSession();
-  if (!session) redirect("/auth/login");
-
+const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className={`flex bg-background min-h-screen `}>
       <aside className={`w-73.75 border-r pt-7`}>
@@ -18,7 +13,9 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
         <Sidebar />
       </aside>
       <div className={`px-9 pt-7 w-full`}>
-        <Header user={session.user} />
+        <Suspense fallback={"Loading"}>
+          <Header />
+        </Suspense>
         <main>{children}</main>
       </div>
     </div>
