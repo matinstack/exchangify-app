@@ -19,8 +19,14 @@ export const NewTransactionSchema = z.object({
 
   categoryId: z
     .string()
-    .min(1, { error: "Please select a categoty" })
-    .max(72, { error: "Not A Valid Card" })
+    .min(1, { error: "Please select a category" })
+    .max(72, { error: "Not A Valid Category" })
+    .trim(),
+
+  subCategoryId: z
+    .string()
+    .min(1, { error: "Please select a category" })
+    .max(72, { error: "Not A Valid Category" })
     .trim(),
 
   date: z.date({ error: "Please pick a date" }),
