@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createCategory } from "@/actions/categories/categories";
 import {
@@ -37,7 +37,6 @@ const NewSubCategoryForm = ({ categories }: Props) => {
     handleSubmit,
     control,
     reset,
-    watch,
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<CreateCategoryType>({
@@ -50,7 +49,10 @@ const NewSubCategoryForm = ({ categories }: Props) => {
     },
   });
   // TODO Change porebtId Optional schema for Sub Category Forms
-  const categoryType = watch("categoryType");
+  const categoryType = useWatch({
+    control,
+    name: "categoryType",
+  });
   const filteredCategories = categories.filter(
     (category) => category.type === categoryType,
   );
