@@ -157,37 +157,44 @@ export const newTransaction = async (values: NewTransactionsType) => {
   } = validatedFields.data;
 
   try {
-    const [validCard, validCategory] = await Promise.all([
-      db
-        .select()
-        .from(cards)
-        .where(and(eq(cards.id, cardId), eq(cards.userId, id))),
+    await db.transaction(async (tx) => {
+      const [card, category] = await Promise.all([
+        tx
+          .select({
+            balance: cards.balance,
+          })
+          .from(cards)
+          .where(and(eq(cards.id, cardId), eq(cards.userId, id)))
+          .for("update"),
 
-      db
-        .select()
-        .from(categories)
-        .where(
-          or(
-            and(eq(categories.id, subCategoryId), eq(categories.userId, id)),
-            and(
-              eq(categories.id, subCategoryId),
-              eq(categories.isDefault, true),
+        tx
+          .select()
+          .from(categories)
+          .where(
+            or(
+              and(eq(categories.id, subCategoryId), eq(categories.userId, id)),
+              and(
+                eq(categories.id, subCategoryId),
+                eq(categories.isDefault, true),
+              ),
             ),
           ),
-        ),
-    ]);
+      ]);
 
-    if (validCard.length === 0) {
-      return { error: "Invalid Card" };
-    }
-    if (validCategory.length === 0) {
-      return { error: "Invalid category" };
-    }
+      if (card.length === 0) {
+        throw new Error("Card not found");
+      }
+      if (category.length === 0) {
+        throw new Error("Category not found");
+      }
 
-    // TODO Check See if card reaches maximum allowed Inventory value
+      if (
+        transactionType === "expense" &&
+        Number(card[0].balance) < Number(amount)
+      ) {
+        throw new Error("INSUFFICIENT_BALANCE");
+      }
 
-    const income = transactionType === "income";
-    await db.transaction(async (tx) => {
       await tx.insert(transactions).values({
         userId: id,
         cardId,
@@ -198,12 +205,14 @@ export const newTransaction = async (values: NewTransactionsType) => {
         description,
         date,
       });
+
       await tx
         .update(cards)
         .set({
-          balance: income
-            ? sql`${cards.balance} + ${amount}`
-            : sql`${cards.balance} - ${amount}`,
+          balance:
+            transactionType === "income"
+              ? sql`${cards.balance} + ${amount}`
+              : sql`${cards.balance} - ${amount}`,
         })
         .where(eq(cards.id, cardId));
     });
@@ -215,7 +224,10 @@ export const newTransaction = async (values: NewTransactionsType) => {
     };
   } catch (err) {
     console.error(err);
-
+    if (err instanceof Error && err.message === "INSUFFICIENT_BALANCE")
+      return {
+        error: "Not enough balance",
+      };
     return {
       error:
         err instanceof Error
