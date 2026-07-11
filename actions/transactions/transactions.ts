@@ -1,9 +1,8 @@
 "use server";
 import { db } from "@/db";
 import { cards, categories, transactions } from "@/db/schema";
-import { and, eq, or, asc, desc, between, count } from "drizzle-orm";
+import { and, eq, or, asc, desc, between, count, sql } from "drizzle-orm";
 import { getSession } from "@/lib/auth-helpers";
-import { revalidatePath } from "next/cache";
 import { startOfDay, endOfDay, startOfWeek, endOfWeek } from "date-fns";
 import { alias } from "drizzle-orm/pg-core";
 
@@ -32,15 +31,15 @@ import {
   NewTransactionSchema,
   type NewTransactionsType,
 } from "@/schema/transactions";
+import { cacheLife, cacheTag, updateTag } from "next/cache";
 
-export const getTransactions = async (query: Query) => {
-  const session = await getSession();
-  if (!session || !session.user.id) {
-    throw new Error("Unauthorized! Please login again.");
-  }
-  const { id } = session.user;
+async function getTransactionsCached(userId: string, query: Query) {
+  "use cache";
+
+  cacheLife("minutes");
+  cacheTag(`transactions:${userId}`);
+
   const { sortBy, page, limit, type, order, dateFilter } = query;
-
   const sortableColumns = {
     date: transactions.date,
     amount: transactions.amount,
@@ -56,7 +55,7 @@ export const getTransactions = async (query: Query) => {
 
   const orderFn = order === "asc" ? asc : desc;
 
-  const conditions = [eq(transactions.userId, id)];
+  const conditions = [eq(transactions.userId, userId)];
 
   if (type) {
     conditions.push(eq(transactions.transactionType, type));
@@ -82,6 +81,7 @@ export const getTransactions = async (query: Query) => {
           id: transactions.id,
           amount: transactions.amount,
           type: transactions.transactionType,
+          note: transactions.note,
           bankName: cards.bankName,
           cardNumber: cards.cardNumber,
           category: parentCategory.name,
@@ -121,6 +121,15 @@ export const getTransactions = async (query: Query) => {
     console.error(err);
     throw err;
   }
+}
+
+export const getTransactions = async (query: Query) => {
+  const session = await getSession();
+  if (!session || !session.user.id) {
+    throw new Error("Unauthorized! Please login again.");
+  }
+
+  return getTransactionsCached(session.user.id, query);
 };
 
 export const newTransaction = async (values: NewTransactionsType) => {
@@ -167,7 +176,7 @@ export const newTransaction = async (values: NewTransactionsType) => {
           ),
         ),
     ]);
-    console.log(validCategory);
+
     if (validCard.length === 0) {
       return { error: "Invalid Card" };
     }
@@ -177,18 +186,29 @@ export const newTransaction = async (values: NewTransactionsType) => {
 
     // TODO Check See if card reaches maximum allowed Inventory value
 
-    await db.insert(transactions).values({
-      userId: id,
-      cardId,
-      amount,
-      categoryId: subCategoryId,
-      transactionType,
-      note,
-      description,
-      date,
+    const income = transactionType === "income";
+    await db.transaction(async (tx) => {
+      await tx.insert(transactions).values({
+        userId: id,
+        cardId,
+        amount,
+        categoryId: subCategoryId,
+        transactionType,
+        note,
+        description,
+        date,
+      });
+      await tx
+        .update(cards)
+        .set({
+          balance: income
+            ? sql`${cards.balance} + ${amount}`
+            : sql`${cards.balance} - ${amount}`,
+        })
+        .where(eq(cards.id, cardId));
     });
-
-    revalidatePath("/app");
+    updateTag(`transactions:${id}`);
+    updateTag(`cards:${id}`);
 
     return {
       success: "Success",
