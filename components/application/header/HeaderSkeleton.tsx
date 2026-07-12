@@ -9,7 +9,7 @@ const HeaderSkeleton = () => {
       </div>
       <div className={"flex gap-24"}>
         <Skeleton className="h-4 w-48" />
-        <Skeleton className="h-4 w-18" />
+        <Skeleton className="h-4 w-19" />
       </div>
     </header>
   );
