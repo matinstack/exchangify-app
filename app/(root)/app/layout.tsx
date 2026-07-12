@@ -2,6 +2,7 @@ import React, { Suspense } from "react";
 import Sidebar from "@/components/application/sidebar/Sidebar";
 import Header from "@/components/application/header/Header";
 import Logo from "@/components/shared/Logo";
+import HeaderSkeleton from "@/components/application/header/HeaderSkeleton";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -13,7 +14,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         <Sidebar />
       </aside>
       <div className={`px-9 pt-7 w-full`}>
-        <Suspense fallback={"Loading"}>
+        <Suspense fallback={<HeaderSkeleton />}>
           <Header />
         </Suspense>
         <main>{children}</main>
