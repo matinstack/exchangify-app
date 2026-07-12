@@ -1,5 +1,4 @@
 import { format } from "date-fns";
-
 import {
   Tooltip,
   TooltipContent,
@@ -16,10 +15,10 @@ import {
 } from "@/components/ui/table";
 import { MoveDownLeft, MoveUpRight } from "lucide-react";
 import TransactionsHeader from "@/components/application/transactions/TransactionsHeader";
-import { Button } from "@/components/ui/button";
-import { EllipsisVertical } from "lucide-react";
+
 import CardNumber from "@/components/application/transactions/CardNumber";
 import TransactionsPagination from "@/components/application/transactions/TransactionsPagination";
+import TransactionDropDownAction from "@/components/application/transactions/TransactionDropDownAction";
 
 export type TransactionItem = {
   id: string;
@@ -101,8 +100,10 @@ const Transactions = ({ data, pagination }: GetTransactionsResponse) => {
                     <TableCell
                       className={`font-semibold ${!isExpense && "text-income"}`}
                     >
-                      {isExpense ? "-" : "+"}
-                      {item.amount}
+                      {isExpense ? "-" : "+"}{" "}
+                      {new Intl.NumberFormat("en-US").format(
+                        Math.trunc(Number(item.amount)),
+                      )}
                     </TableCell>
                     <TableCell>
                       <p>{item.bankName}</p>
@@ -119,9 +120,7 @@ const Transactions = ({ data, pagination }: GetTransactionsResponse) => {
                       </p>
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost">
-                        <EllipsisVertical />
-                      </Button>
+                      <TransactionDropDownAction transaction={item} />
                     </TableCell>
                   </TableRow>
                 );
@@ -130,7 +129,9 @@ const Transactions = ({ data, pagination }: GetTransactionsResponse) => {
           <TableRow></TableRow>
         </TableBody>
       </Table>
-      <TransactionsPagination pagination={pagination} />
+      {pagination.totalPages > 1 && (
+        <TransactionsPagination pagination={pagination} />
+      )}
     </div>
   );
 };
