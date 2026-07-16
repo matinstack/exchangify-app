@@ -1,7 +1,17 @@
 "use server";
 import { db } from "@/db";
 import { cards, categories, transactions } from "@/db/schema";
-import { and, eq, or, asc, desc, between, count, sql } from "drizzle-orm";
+import {
+  and,
+  eq,
+  or,
+  asc,
+  desc,
+  between,
+  count,
+  sql,
+  inArray,
+} from "drizzle-orm";
 import { getSession } from "@/lib/auth-helpers";
 import { startOfDay, endOfDay, startOfWeek, endOfWeek } from "date-fns";
 import { alias } from "drizzle-orm/pg-core";
@@ -79,13 +89,17 @@ async function getTransactionsCached(userId: string, query: Query) {
       db
         .select({
           id: transactions.id,
+          cardId: transactions.cardId,
           amount: transactions.amount,
           type: transactions.transactionType,
           note: transactions.note,
+          description: transactions.description,
           bankName: cards.bankName,
           cardNumber: cards.cardNumber,
           category: parentCategory.name,
+          categoryId: parentCategory.id,
           subCategory: categories.name,
+          subCategoryId: categories.id,
           date: transactions.date,
         })
         .from(transactions)
@@ -132,7 +146,11 @@ export const getTransactions = async (query: Query) => {
   return getTransactionsCached(session.user.id, query);
 };
 
-export const newTransaction = async (values: NewTransactionsType) => {
+export const handleTransaction = async (
+  values: NewTransactionsType,
+  type: "create" | "update",
+  transactionId?: string,
+) => {
   const session = await getSession();
   if (!session || !session.user.id) {
     throw new Error("Unauthorized!");
@@ -158,39 +176,153 @@ export const newTransaction = async (values: NewTransactionsType) => {
 
   try {
     await db.transaction(async (tx) => {
-      const [card, category] = await Promise.all([
-        tx
-          .select({
-            balance: cards.balance,
-          })
-          .from(cards)
-          .where(and(eq(cards.id, cardId), eq(cards.userId, id)))
-          .for("update"),
-
-        tx
-          .select()
-          .from(categories)
-          .where(
-            or(
-              and(eq(categories.id, subCategoryId), eq(categories.userId, id)),
-              and(
-                eq(categories.id, subCategoryId),
-                eq(categories.isDefault, true),
-              ),
+      const category = await tx
+        .select()
+        .from(categories)
+        .where(
+          or(
+            and(eq(categories.id, subCategoryId), eq(categories.userId, id)),
+            and(
+              eq(categories.id, subCategoryId),
+              eq(categories.isDefault, true),
             ),
           ),
-      ]);
+        );
 
-      if (card.length === 0) {
-        throw new Error("Card not found");
-      }
       if (category.length === 0) {
         throw new Error("Category not found");
       }
 
+      if (type === "update") {
+        if (!transactionId) {
+          throw new Error("Something went wrong");
+        }
+
+        const [previousTransaction] = await tx
+          .select({
+            previousAmount: transactions.amount,
+            previousType: transactions.transactionType,
+            previousCardId: transactions.cardId,
+          })
+          .from(transactions)
+          .where(
+            and(
+              eq(transactions.id, transactionId),
+              eq(transactions.userId, id),
+            ),
+          );
+
+        if (!previousTransaction) {
+          throw new Error("Transaction not found");
+        }
+
+        const oldAmount = Number(previousTransaction.previousAmount);
+        const newAmount = Number(amount);
+        const previousType = previousTransaction.previousType;
+        const previousCardId = previousTransaction.previousCardId;
+
+        const oldEffect = previousType === "income" ? oldAmount : -oldAmount;
+        const newEffect = transactionType === "income" ? newAmount : -newAmount;
+
+        // همه‌ی کارت‌های درگیر (یکی یا دوتا) رو به ترتیب ثابت بر اساس id قفل می‌کنیم
+        // تا صرف‌ نظر از جهت جابه‌جایی بین دو کارت، هیچ‌وقت deadlock رخ نده
+        const cardIdsToLock = Array.from(
+          new Set([cardId, previousCardId]),
+        ).sort();
+
+        const lockedCards = await tx
+          .select({ id: cards.id, balance: cards.balance })
+          .from(cards)
+          .where(and(inArray(cards.id, cardIdsToLock), eq(cards.userId, id)))
+          .orderBy(asc(cards.id))
+          .for("update");
+
+        const newCard = lockedCards.find((c) => c.id === cardId);
+        const oldCard = lockedCards.find((c) => c.id === previousCardId);
+
+        if (!newCard) {
+          throw new Error("Card not found");
+        }
+        if (!oldCard) {
+          throw new Error("Previous card not found");
+        }
+
+        if (previousCardId === cardId) {
+          // کارت عوض نشده: اثر قدیم و جدید رو یک‌جا روی همون کارت اعمال می‌کنیم
+          const diffEffect = newEffect - oldEffect;
+          const projectedBalance = Number(newCard.balance) + diffEffect;
+
+          if (projectedBalance < 0) {
+            throw new Error("INSUFFICIENT_BALANCE");
+          }
+
+          await tx
+            .update(cards)
+            .set({
+              balance: sql`${cards.balance} + ${diffEffect}`,
+            })
+            .where(and(eq(cards.id, cardId), eq(cards.userId, id)));
+        } else {
+          // کارت عوض شده: اثر قدیم رو از کارت قدیم برمی‌گردونیم و اثر جدید رو روی کارت جدید اعمال می‌کنیم
+          const oldCardProjected = Number(oldCard.balance) - oldEffect;
+          const newCardProjected = Number(newCard.balance) + newEffect;
+
+          if (oldCardProjected < 0 || newCardProjected < 0) {
+            throw new Error("INSUFFICIENT_BALANCE");
+          }
+
+          await Promise.all([
+            tx
+              .update(cards)
+              .set({
+                balance: sql`${cards.balance} - ${oldEffect}`,
+              })
+              .where(and(eq(cards.id, previousCardId), eq(cards.userId, id))),
+            tx
+              .update(cards)
+              .set({
+                balance: sql`${cards.balance} + ${newEffect}`,
+              })
+              .where(and(eq(cards.id, cardId), eq(cards.userId, id))),
+          ]);
+        }
+
+        await tx
+          .update(transactions)
+          .set({
+            userId: id,
+            cardId,
+            amount,
+            categoryId: subCategoryId,
+            transactionType,
+            note,
+            description,
+            date,
+          })
+          .where(
+            and(
+              eq(transactions.id, transactionId),
+              eq(transactions.userId, id),
+            ),
+          );
+
+        return;
+      }
+
+      // ----- create -----
+      const [card] = await tx
+        .select({ balance: cards.balance })
+        .from(cards)
+        .where(and(eq(cards.id, cardId), eq(cards.userId, id)))
+        .for("update");
+
+      if (!card) {
+        throw new Error("Card not found");
+      }
+
       if (
         transactionType === "expense" &&
-        Number(card[0].balance) < Number(amount)
+        Number(card.balance) < Number(amount)
       ) {
         throw new Error("INSUFFICIENT_BALANCE");
       }
@@ -214,20 +346,23 @@ export const newTransaction = async (values: NewTransactionsType) => {
               ? sql`${cards.balance} + ${amount}`
               : sql`${cards.balance} - ${amount}`,
         })
-        .where(eq(cards.id, cardId));
+        .where(and(eq(cards.id, cardId), eq(cards.userId, id)));
     });
+
     updateTag(`transactions:${id}`);
     updateTag(`cards:${id}`);
 
     return {
-      success: "Success",
+      success:
+        type === "update" ? "Transaction updated." : "Transaction created.",
     };
   } catch (err) {
     console.error(err);
-    if (err instanceof Error && err.message === "INSUFFICIENT_BALANCE")
+    if (err instanceof Error && err.message === "INSUFFICIENT_BALANCE") {
       return {
         error: "Not enough balance",
       };
+    }
     return {
       error:
         err instanceof Error
@@ -247,9 +382,7 @@ export const deleteTransactionById = async (transactionId: string) => {
   const userId = session.user.id;
 
   try {
-
     const res = await db.transaction(async (tx) => {
-
       const transaction = await tx
         .select({
           id: transactions.id,
@@ -280,6 +413,7 @@ export const deleteTransactionById = async (transactionId: string) => {
         })
         .from(cards)
         .where(and(eq(cards.id, cardId), eq(cards.userId, userId)))
+        .for("update")
         .limit(1);
 
       if (card.length === 0) {
@@ -288,6 +422,8 @@ export const deleteTransactionById = async (transactionId: string) => {
         };
       }
 
+      // برگردوندن اثر تراکنش: اگه income بود، حذفش یعنی بالانس کم می‌شه؛
+      // اگه بالانس بعد از کم‌کردن منفی می‌شه، اجازه‌ی حذف نده
       if (
         transactionType === "income" &&
         Number(card[0].balance) < Number(amount)
@@ -307,7 +443,7 @@ export const deleteTransactionById = async (transactionId: string) => {
               ? sql`${cards.balance} - ${amount}`
               : sql`${cards.balance} + ${amount}`,
         })
-        .where(eq(cards.id, cardId));
+        .where(and(eq(cards.id, cardId), eq(cards.userId, userId)));
 
       return {
         success: "Transaction deleted",
