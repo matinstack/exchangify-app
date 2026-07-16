@@ -8,18 +8,30 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 import { EllipsisVertical, SquarePen, Trash } from "lucide-react";
 import { useState } from "react";
 import DeleteTransactionAction from "@/components/application/transactions/DeleteTransactionAction";
-import {
-  TransactionDialogProps,
-  TransactionDropDownActionProps,
-} from "@/components/application/transactions/TransactionDropDownParent";
+import { TransactionDialogProps } from "@/components/application/transactions/TransactionDropDownParent";
+import { NewTransactionData } from "@/data/transactions";
+import NewTransactionForm from "@/components/application/transactions/NewTransactionForm";
+import { TransactionItem } from "@/components/application/transactions/Transactions";
+
+type TransactionDropDownActionProps = {
+  transaction: TransactionItem;
+  editTransactionData: NewTransactionData;
+};
 
 export default function TransactionDropDownAction({
   transaction,
+  editTransactionData,
 }: TransactionDropDownActionProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isEditFormDialogOpen, setIsEditFormDialogOpen] = useState(false);
@@ -58,6 +70,7 @@ export default function TransactionDropDownAction({
         transaction={transaction}
         isOpen={isEditFormDialogOpen}
         setIsOpen={setIsEditFormDialogOpen}
+        editTransactionData={editTransactionData}
       />
       <DeleteTransactionAction
         transaction={transaction}
@@ -68,15 +81,32 @@ export default function TransactionDropDownAction({
   );
 }
 
+type Props = TransactionDialogProps & {
+  editTransactionData: NewTransactionData;
+};
+
 function TransactionEditFormDialog({
+  editTransactionData,
   transaction,
   isOpen,
   setIsOpen,
-}: TransactionDialogProps) {
+}: Props) {
+  const { cards, success, subCategories, categories } = editTransactionData;
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent>
-        <DialogHeader>Hello</DialogHeader>
+        <DialogHeader>
+          <DialogTitle>Edit Transaction</DialogTitle>
+          <DialogDescription>
+            Edit the transaction information below.
+          </DialogDescription>
+        </DialogHeader>
+        <NewTransactionForm
+          cards={cards}
+          categories={categories}
+          subCategories={subCategories}
+          defaultValues={transaction}
+        />
       </DialogContent>
     </Dialog>
   );

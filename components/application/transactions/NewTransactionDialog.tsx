@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import NewTransactionForm from "@/components/application/transactions/NewTransactionForm";
+import { TransactionItem } from "@/components/application/transactions/Transactions";
 
 type Card = {
   id: string;
@@ -34,6 +35,7 @@ export type NewTransactionDataProps = {
   cards: Card[];
   categories: Category[];
   subCategories: SubCategory[];
+  defaultValues?: TransactionItem;
 };
 
 type NewTransactionDialog = NewTransactionDataProps & {
@@ -58,8 +60,10 @@ const NewTransactionDialog = ({
         onPointerDownOutside={(e) => e.preventDefault()}
       >
         <DialogHeader>
-          <DialogTitle>test test test</DialogTitle>
-          <DialogDescription>test</DialogDescription>
+          <DialogTitle>Add Transaction</DialogTitle>
+          <DialogDescription>
+            Fill in the details below to create a new transaction.
+          </DialogDescription>
         </DialogHeader>
         {!success ? (
           "There was a problem getting your data. Please try again later."

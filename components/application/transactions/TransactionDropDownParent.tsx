@@ -7,7 +7,8 @@ import { TransactionItem } from "@/components/application/transactions/Transacti
 export type TransactionDropDownActionProps = {
   transaction: TransactionItem;
 };
-export type TransactionDialogProps = TransactionDropDownActionProps & {
+export type TransactionDialogProps = {
+  transaction: TransactionItem;
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
 };
@@ -19,9 +20,15 @@ const TransactionDropDownParent = async ({
   if (!session || !session.user.id) {
     redirect("/auth/login");
   }
-  const { cards, categories, subCategories, success } =
-    await getNewTransactionDataByUserId(session.user.id);
-  return <TransactionDropDownAction transaction={transaction} />;
+  const editTransactionData = await getNewTransactionDataByUserId(
+    session.user.id,
+  );
+  return (
+    <TransactionDropDownAction
+      transaction={transaction}
+      editTransactionData={editTransactionData}
+    />
+  );
 };
 
 export default TransactionDropDownParent;
