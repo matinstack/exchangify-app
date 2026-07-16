@@ -56,3 +56,7 @@ export const getNewTransactionDataByUserId = async (id: string) => {
     return { cards: [], categories: [], subCategories: [], success: false };
   }
 };
+
+export type NewTransactionData = Awaited<
+  ReturnType<typeof getNewTransactionDataByUserId>
+>;
