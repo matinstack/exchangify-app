@@ -24,13 +24,14 @@ import {
 import { Input } from "@/components/ui/input";
 import FormSubmitButton from "@/components/shared/FormSubmitButton";
 import { Textarea } from "@/components/ui/textarea";
-import { newTransaction } from "@/actions/transactions/transactions";
+import { handleTransaction } from "@/actions/transactions/transactions";
 import { toast } from "sonner";
 
 const NewTransactionForm = ({
   categories,
   subCategories,
   cards,
+  defaultValues,
 }: NewTransactionDataProps) => {
   const {
     reset,
@@ -43,19 +44,26 @@ const NewTransactionForm = ({
   } = useForm<NewTransactionsType>({
     resolver: zodResolver(NewTransactionSchema),
     defaultValues: {
-      cardId: "",
-      amount: "",
-      transactionType: "" as unknown as NewTransactionsType["transactionType"],
-      categoryId: "",
-      subCategoryId: "",
-      note: "",
-      description: "",
-      date: new Date(),
+      cardId: defaultValues?.cardId ?? "",
+      amount: defaultValues?.amount ?? "",
+      transactionType:
+        defaultValues?.type ??
+        ("" as unknown as NewTransactionsType["transactionType"]),
+      categoryId: defaultValues?.categoryId ?? "",
+      subCategoryId: defaultValues?.subCategoryId ?? "",
+      note: defaultValues?.note ?? "",
+      description: defaultValues?.description ?? "",
+      date: defaultValues?.date ? new Date(defaultValues.date) : new Date(),
     },
   });
   const selectedCard = useWatch({
     control,
     name: "cardId",
+  });
+
+  const selectedDate = useWatch({
+    control,
+    name: "date",
   });
 
   const selectedTransactionType = useWatch({
@@ -75,7 +83,24 @@ const NewTransactionForm = ({
   );
 
   const onSubmit = async (values: NewTransactionsType) => {
-    const res = await newTransaction(values);
+    const isSame =
+      values.cardId === defaultValues?.cardId &&
+      values.amount === defaultValues?.amount &&
+      values.transactionType === defaultValues?.type &&
+      values.categoryId === defaultValues?.categoryId &&
+      values.subCategoryId === defaultValues?.subCategoryId &&
+      values.description === defaultValues?.description &&
+      values.note === defaultValues?.note &&
+      values.date.toISOString() === new Date(defaultValues!.date).toISOString();
+
+    if (isSame) {
+      return toast.info("No changes detected.", { position: "top-center" });
+    }
+    let res;
+
+    if (defaultValues) {
+      res = await handleTransaction(values, "update", defaultValues.id);
+    } else res = await handleTransaction(values, "create");
 
     if (res.error) {
       toast.error(res.error, { position: "top-center" });
@@ -256,7 +281,18 @@ const NewTransactionForm = ({
         <Field data-invalid={!!errors.date} className="md:col-span-1">
           <FieldLabel>Date</FieldLabel>
 
-          <Input type="date" disabled={isSubmitting} />
+          <Input
+            type="date"
+            disabled={isSubmitting}
+            value={
+              selectedDate
+                ? new Date(selectedDate).toISOString().split("T")[0]
+                : ""
+            }
+            onChange={(e) => {
+              setValue("date", new Date(e.target.value), { shouldDirty: true });
+            }}
+          />
 
           {errors.date && <FieldError>{errors.date.message}</FieldError>}
         </Field>
@@ -283,8 +319,10 @@ const NewTransactionForm = ({
         <FormSubmitButton
           className="md:col-span-2"
           disabled={isSubmitting}
-          text={"Add"}
-          loadingText={"Adding Transaction..."}
+          text={defaultValues ? "Update" : "Add"}
+          loadingText={
+            defaultValues ? "Updating Transaction..." : "Adding Transaction..."
+          }
         />
       </FieldGroup>
     </form>
