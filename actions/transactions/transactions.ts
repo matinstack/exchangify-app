@@ -236,3 +236,100 @@ export const newTransaction = async (values: NewTransactionsType) => {
     };
   }
 };
+
+export const deleteTransactionById = async (transactionId: string) => {
+  const session = await getSession();
+
+  if (!session?.user?.id) {
+    throw new Error("Unauthorized!");
+  }
+
+  const userId = session.user.id;
+
+  try {
+
+    const res = await db.transaction(async (tx) => {
+
+      const transaction = await tx
+        .select({
+          id: transactions.id,
+          amount: transactions.amount,
+          transactionType: transactions.transactionType,
+          cardId: transactions.cardId,
+        })
+        .from(transactions)
+        .where(
+          and(
+            eq(transactions.id, transactionId),
+            eq(transactions.userId, userId),
+          ),
+        )
+        .limit(1);
+
+      if (transaction.length === 0) {
+        return {
+          error: "Transaction not found",
+        };
+      }
+
+      const { amount, transactionType, cardId } = transaction[0];
+
+      const card = await tx
+        .select({
+          balance: cards.balance,
+        })
+        .from(cards)
+        .where(and(eq(cards.id, cardId), eq(cards.userId, userId)))
+        .limit(1);
+
+      if (card.length === 0) {
+        return {
+          error: "Card not found",
+        };
+      }
+
+      if (
+        transactionType === "income" &&
+        Number(card[0].balance) < Number(amount)
+      ) {
+        return {
+          error: "Not enough balance",
+        };
+      }
+
+      await tx.delete(transactions).where(eq(transactions.id, transactionId));
+
+      await tx
+        .update(cards)
+        .set({
+          balance:
+            transactionType === "income"
+              ? sql`${cards.balance} - ${amount}`
+              : sql`${cards.balance} + ${amount}`,
+        })
+        .where(eq(cards.id, cardId));
+
+      return {
+        success: "Transaction deleted",
+      };
+    });
+
+    if ("error" in res) {
+      return res;
+    }
+
+    updateTag(`transactions:${userId}`);
+    updateTag(`cards:${userId}`);
+
+    return res;
+  } catch (err) {
+    console.error(err);
+
+    return {
+      error:
+        err instanceof Error
+          ? `Database Error: ${err.message}`
+          : "Unexpected database error occurred",
+    };
+  }
+};

@@ -26,6 +26,8 @@ import {
 } from "lucide-react";
 import { TransactionItem } from "@/components/application/transactions/Transactions";
 import { useState } from "react";
+import { deleteTransactionById } from "@/actions/transactions/transactions";
+import { toast } from "sonner";
 type TransactionDropDownActionProps = {
   transaction: TransactionItem;
 };
@@ -78,15 +80,21 @@ function TransactionDeleteConfirmDialog({
   isOpen,
   setIsOpen,
 }: DeleteDialogProps) {
-  const handleDelete = () => {
-    console.log("Deleting transaction:", transaction.id);
+  const handleDelete = async () => {
+    const res = await deleteTransactionById(transaction.id);
+    if (res.error) {
+      toast.error(res.error, { position: "top-center" });
+      setIsOpen(false);
+      return;
+    }
+    toast.success(res.success, { position: "top-center" });
     setIsOpen(false);
+    return;
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-xl">
-        {/* Header Section */}
         <DialogHeader className="flex flex-col gap-1 text-left">
           <div className="flex items-center gap-2 text-destructive">
             <AlertTriangle className="h-5 w-5" />
@@ -100,7 +108,6 @@ function TransactionDeleteConfirmDialog({
           </DialogDescription>
         </DialogHeader>
 
-        {/* Minimalist Details Section */}
         <div className="py-4 my-2 border-y border-border flex flex-col gap-3 text-sm">
           <div className="flex justify-between items-center">
             <span className="text-muted-foreground">Type & Category</span>
@@ -146,7 +153,6 @@ function TransactionDeleteConfirmDialog({
           )}
         </div>
 
-        {/* Action Buttons */}
         <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
           <Button
             variant="outline"
