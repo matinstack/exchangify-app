@@ -11,18 +11,19 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 
 import { EllipsisVertical, SquarePen, Trash } from "lucide-react";
-import { TransactionItem } from "@/components/application/transactions/Transactions";
 import { useState } from "react";
 import DeleteTransactionAction from "@/components/application/transactions/DeleteTransactionAction";
-type TransactionDropDownActionProps = {
-  transaction: TransactionItem;
-};
+import {
+  TransactionDialogProps,
+  TransactionDropDownActionProps,
+} from "@/components/application/transactions/TransactionDropDownParent";
 
 export default function TransactionDropDownAction({
   transaction,
 }: TransactionDropDownActionProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isEditFormDialogOpen, setIsEditFormDialogOpen] = useState(false);
+
   return (
     <>
       <DropdownMenu>
@@ -66,11 +67,6 @@ export default function TransactionDropDownAction({
     </>
   );
 }
-
-export type TransactionDialogProps = TransactionDropDownActionProps & {
-  isOpen: boolean;
-  setIsOpen: (open: boolean) => void;
-};
 
 function TransactionEditFormDialog({
   transaction,

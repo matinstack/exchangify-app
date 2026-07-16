@@ -19,6 +19,7 @@ import TransactionsHeader from "@/components/application/transactions/Transactio
 import CardNumber from "@/components/application/transactions/CardNumber";
 import TransactionsPagination from "@/components/application/transactions/TransactionsPagination";
 import TransactionDropDownAction from "@/components/application/transactions/TransactionDropDownAction";
+import TransactionDropDownParent from "@/components/application/transactions/TransactionDropDownParent";
 
 export type TransactionItem = {
   id: string;
@@ -120,7 +121,7 @@ const Transactions = ({ data, pagination }: GetTransactionsResponse) => {
                       </p>
                     </TableCell>
                     <TableCell className="text-right">
-                      <TransactionDropDownAction transaction={item} />
+                      <TransactionDropDownParent transaction={item} />
                     </TableCell>
                   </TableRow>
                 );
