@@ -3,7 +3,7 @@ import { NewCardSchema, type NewCardSchemaType } from "@/schema/cards";
 import { getSession } from "@/lib/auth-helpers";
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
-import { cards } from "@/db/schema";
+import { ActivityLog, cards } from "@/db/schema";
 import { updateTag } from "next/cache";
 
 export const addNewCard = async (values: NewCardSchemaType) => {
@@ -41,18 +41,35 @@ export const addNewCard = async (values: NewCardSchemaType) => {
   }
 
   try {
-    await db.insert(cards).values({
-      cardNumber,
-      userId: session.user.id,
-      cardColor,
-      bankName,
-      balance,
-      customName: optionalName,
-      type: cardType,
-      currency,
+    await db.transaction(async (tx) => {
+      const [card] = await tx
+        .insert(cards)
+        .values({
+          cardNumber,
+          userId: session.user.id,
+          cardColor,
+          bankName,
+          balance,
+          customName: optionalName,
+          type: cardType,
+          currency,
+        })
+        .returning({ id: cards.id });
+
+      await tx.insert(ActivityLog).values({
+        userId: session.user.id,
+        action: "card_created",
+        entityType: "account",
+        entityId: card.id,
+        metadata: {
+          bankName,
+          currency,
+        },
+      });
     });
 
     updateTag(`cards:${session.user.id}`);
+    updateTag(`activity-log:${session.user.id}`);
 
     return { success: "Card added successfully!" };
   } catch (err) {
