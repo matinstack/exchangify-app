@@ -1,17 +1,23 @@
 import { getSession } from "@/lib/auth-helpers";
 import { redirect } from "next/navigation";
-import { getAllActivitiesByUserId } from "@/data/activity-log";
+import { getActivities } from "@/actions/activity-log/activity-log";
+import { Query } from "@/actions/transactions/transactions";
 import ActivityLogTable from "@/components/application/activity-log/ActivityLogTable";
 
-const ActivityLog = async () => {
+type Props = {
+  searchParams: Promise<Query>;
+};
+
+const ActivityLog = async ({ searchParams }: Props) => {
   const session = await getSession();
   if (!session || !session.user.id) redirect("/auth/login");
-  const { id } = session.user;
-  const activities = await getAllActivitiesByUserId(id);
+
+  const query = await searchParams;
+  const data = await getActivities(query);
 
   return (
     <>
-      <ActivityLogTable activities={activities} />
+      <ActivityLogTable activities={data.data} pagination={data.pagination} />
     </>
   );
 };
