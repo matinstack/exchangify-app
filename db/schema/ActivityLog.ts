@@ -69,3 +69,5 @@ export const ActivityLog = pgTable(
     index("activity_user_created_idx").on(table.userId, table.createdAt),
   ],
 );
+
+export type ActivityLogSchemaType = typeof ActivityLog.$inferSelect;
