@@ -57,13 +57,13 @@ export const ActivityLog = pgTable(
   {
     id: uuid("id").primaryKey().defaultRandom(),
     userId: text("user_id")
-      .references(() => user.id)
+      .references(() => user.id, { onDelete: "cascade" })
       .notNull(),
     action: activityActionEnum("activity_action").notNull(),
     entityType: entityTypeEnum("entity_type").notNull(),
     entityId: text("entity_id"),
     metadata: jsonb("metadata").$type<Record<string, unknown>>(),
-    createdAt: timestamp("created_at").defaultNow(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (table) => [
     index("activity_user_created_idx").on(table.userId, table.createdAt),

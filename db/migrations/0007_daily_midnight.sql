@@ -1,0 +1,1 @@
+ALTER TABLE "activity_log" ALTER COLUMN "created_at" SET NOT NULL;
