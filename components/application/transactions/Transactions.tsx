@@ -17,8 +17,8 @@ import { MoveDownLeft, MoveUpRight } from "lucide-react";
 import TransactionsHeader from "@/components/application/transactions/TransactionsHeader";
 
 import CardNumber from "@/components/application/transactions/CardNumber";
-import TransactionsPagination from "@/components/application/transactions/TransactionsPagination";
 import TransactionDropDownParent from "@/components/application/transactions/TransactionDropDownParent";
+import PagePagination from "@/components/shared/PagePagination";
 
 export type TransactionItem = {
   id: string;
@@ -133,9 +133,7 @@ const Transactions = ({ data, pagination }: GetTransactionsResponse) => {
           <TableRow></TableRow>
         </TableBody>
       </Table>
-      {pagination.totalPages > 1 && (
-        <TransactionsPagination pagination={pagination} />
-      )}
+      {pagination.totalPages > 1 && <PagePagination pagination={pagination} />}
     </div>
   );
 };

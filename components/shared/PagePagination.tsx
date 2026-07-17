@@ -23,11 +23,7 @@ type PaginationProps = {
 
 type PaginationAction = "previous" | "next" | "list";
 
-const TransactionsPagination = ({
-  pagination,
-}: {
-  pagination: PaginationProps;
-}) => {
+const PagePagination = ({ pagination }: { pagination: PaginationProps }) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -138,4 +134,4 @@ const TransactionsPagination = ({
   );
 };
 
-export default TransactionsPagination;
+export default PagePagination;
