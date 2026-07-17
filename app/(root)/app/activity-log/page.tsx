@@ -1,8 +1,11 @@
+import ActivityLog from "@/components/application/activity-log/ActivityLog";
+import { Suspense } from "react";
+
 const activityLogPage = () => {
   return (
-    <div>
-      ActivityLogPage
-    </div>
+    <Suspense fallback={"Loading..."}>
+      <ActivityLog />
+    </Suspense>
   );
 };
 
