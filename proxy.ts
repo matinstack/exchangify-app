@@ -6,9 +6,13 @@ import {
   DEFAULT_LOGIN_REDIRECT,
   protectedRoutes,
 } from "./routes";
+import { auth } from "@/lib/auth";
 export default async function proxy(req: NextRequest) {
-  const sessionToken = req.cookies.get("better-auth.session_token")?.value;
-  const isLoggedIn = !!sessionToken;
+  const session = await auth.api.getSession({
+    headers: req.headers,
+  });
+
+  const isLoggedIn = !!session;
   const { nextUrl } = req;
 
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
