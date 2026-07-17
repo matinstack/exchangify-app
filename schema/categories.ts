@@ -11,7 +11,9 @@ const ACCEPTED_IMAGE_TYPES = [
 ];
 
 export const createCategorySchema = z.object({
-  categoryType: z.enum(transactionTypeEnum.enumValues),
+  categoryType: z.enum(transactionTypeEnum.enumValues, {
+    error: "Select A Category",
+  }),
   // icon: z.string().max(128, { error: "Too Many Characters" }).trim().optional(),
   parentId: z.uuid().nullable().optional(),
   name: z
@@ -36,5 +38,20 @@ export const createCategorySchema = z.object({
   //   ),
 });
 
+export const createSubCategorySchema = z.object({
+  categoryType: z.enum(transactionTypeEnum.enumValues, {
+    error: "Select A Category",
+  }),
+  parentId: z.uuid({ error: "Select A Parent Category" }).trim(),
+  name: z
+    .string()
+    .min(1, "Please enter a name")
+    .max(32, { error: "Too many characters" })
+    .trim(),
+
+  icon: z.any().optional(),
+});
+
 export type CreateCategoryType = z.input<typeof createCategorySchema>;
+export type createSubCategoryType = z.input<typeof createSubCategorySchema>;
 // TODO Figure out what todo with dept id

@@ -4,8 +4,8 @@ import { useForm, Controller, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createCategory } from "@/actions/categories/categories";
 import {
-  createCategorySchema,
-  type CreateCategoryType,
+  createSubCategorySchema,
+  type createSubCategoryType,
 } from "@/schema/categories";
 import {
   Field,
@@ -39,12 +39,12 @@ const NewSubCategoryForm = ({ categories }: Props) => {
     reset,
     setValue,
     formState: { errors, isSubmitting },
-  } = useForm<CreateCategoryType>({
-    resolver: zodResolver(createCategorySchema),
+  } = useForm<createSubCategoryType>({
+    resolver: zodResolver(createSubCategorySchema),
     defaultValues: {
       name: "",
       icon: undefined,
-      categoryType: "" as unknown as CreateCategoryType["categoryType"],
+      categoryType: "" as unknown as createSubCategoryType["categoryType"],
       parentId: undefined,
     },
   });
@@ -57,7 +57,8 @@ const NewSubCategoryForm = ({ categories }: Props) => {
     (category) => category.type === categoryType,
   );
 
-  const onSubmit = async (values: CreateCategoryType) => {
+  const onSubmit = async (values: createSubCategoryType) => {
+    console.log(values);
     const res = await createCategory(values);
 
     if (res.error) {
@@ -66,8 +67,6 @@ const NewSubCategoryForm = ({ categories }: Props) => {
     }
     toast.success(res.success, { position: "top-center" });
     reset();
-
-    console.log(values);
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -82,7 +81,7 @@ const NewSubCategoryForm = ({ categories }: Props) => {
                 onValueChange={(value) => {
                   field.onChange(value);
 
-                  setValue("parentId", null);
+                  setValue("parentId", "");
                 }}
               >
                 <SelectTrigger>
