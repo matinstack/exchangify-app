@@ -1,8 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Calendar, CalendarDays, Funnel, Search } from "lucide-react";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Funnel, Search } from "lucide-react";
 import {
   InputGroup,
   InputGroupAddon,
@@ -18,13 +17,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useRouter, useSearchParams } from "next/navigation";
+import DateFilterDropDown from "@/components/shared/DateFilterDropDown";
 
 const TransactionsFilters = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const filter = searchParams.get("type") ?? "all";
-  const dateFilter = searchParams.get("dateFilter") ?? "all";
 
   return (
     <>
@@ -86,47 +85,7 @@ const TransactionsFilters = () => {
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button>
-            <CalendarDays />
-            {dateFilter === "all" && "All Time"}
-            {dateFilter === "ytd" && "YTD"}
-            {dateFilter === "3m" && "3M"}
-            {dateFilter === "1m" && "1M"}
-            {dateFilter === "7d" && "7D"}
-            {dateFilter === "1d" && "1D"}
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-fit">
-          <Tabs
-            defaultValue="all"
-            onValueChange={(e) => {
-              const params = new URLSearchParams(searchParams);
-
-              if (e === "all") {
-                params.delete("dateFilter");
-                router.replace(`?${params.toString()}`);
-              } else {
-                params.set("dateFilter", e);
-                router.replace(`?${params.toString()}`);
-              }
-            }}
-          >
-            <TabsList>
-              <TabsTrigger value="1d">1D</TabsTrigger>
-              <TabsTrigger value="7d">7D</TabsTrigger>
-              <TabsTrigger value="1m">1M</TabsTrigger>
-              <TabsTrigger value="3m">3M</TabsTrigger>
-              <TabsTrigger value="ytd">YTD</TabsTrigger>
-              <TabsTrigger value="all">
-                <Calendar />
-                All Time
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <DateFilterDropDown />
     </>
   );
 };
