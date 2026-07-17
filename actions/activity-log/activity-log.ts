@@ -40,21 +40,21 @@ async function getActivitiesCached(userId: string, query: ActivityQuery) {
     const start = startOfDay(now);
     const end = endOfDay(now);
 
-    conditions.push(between(transactions.date, start, end));
+    conditions.push(between(ActivityLog.createdAt, start, end));
   }
 
   if (dateFilter === "thisWeek") {
     const start = startOfWeek(now);
     const end = endOfWeek(now);
 
-    conditions.push(between(transactions.date, start, end));
+    conditions.push(between(ActivityLog.createdAt, start, end));
   }
 
   if (dateFilter === "thisMonth") {
     const start = startOfMonth(now);
     const end = endOfMonth(now);
 
-    conditions.push(between(transactions.date, start, end));
+    conditions.push(between(ActivityLog.createdAt, start, end));
   }
 
   try {

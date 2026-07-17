@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { TransactionDialogProps } from "@/components/application/transactions/TransactionDropDownAction";
+import { TransactionDialogProps } from "@/components/application/transactions/TransactionDropDownParent";
 import { toast } from "sonner";
 import { deleteTransactionById } from "@/actions/transactions/transactions";
 import { AlertTriangle } from "lucide-react";
