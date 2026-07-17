@@ -13,7 +13,16 @@ import {
   inArray,
 } from "drizzle-orm";
 import { getSession } from "@/lib/auth-helpers";
-import { startOfDay, endOfDay, startOfWeek, endOfWeek } from "date-fns";
+import {
+  startOfDay,
+  endOfDay,
+  startOfWeek,
+  endOfWeek,
+  startOfMonth,
+  endOfMonth,
+  startOfYear,
+  endOfYear
+} from "date-fns";
 import { alias } from "drizzle-orm/pg-core";
 
 const parentCategory = alias(categories, "parentCategory");
@@ -80,6 +89,16 @@ async function getTransactionsCached(userId: string, query: Query) {
   } else if (dateFilter === "thisWeek") {
     const start = startOfWeek(now);
     const end = endOfWeek(now);
+
+    conditions.push(between(transactions.date, start, end));
+  } else if (dateFilter === "thisMonth") {
+    const start = startOfMonth(now);
+    const end = endOfMonth(now);
+
+    conditions.push(between(transactions.date, start, end));
+  } else if (dateFilter === "thisYear") {
+    const start = startOfYear(now);
+    const end = endOfYear(now);
 
     conditions.push(between(transactions.date, start, end));
   }
