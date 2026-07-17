@@ -12,7 +12,7 @@ import {
   endOfMonth,
 } from "date-fns";
 import { db } from "@/db";
-import { cacheTag } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 
 export type ActivityQuery = {
   page?: string;
@@ -22,7 +22,10 @@ export type ActivityQuery = {
 
 async function getActivitiesCached(userId: string, query: ActivityQuery) {
   "use cache";
-  cacheTag(`cache:${userId}`);
+
+  cacheLife("days");
+  cacheTag(`activity-log:${userId}`);
+
   const { page, limit, dateFilter } = query;
 
   const currentPage = Number(page) ?? 1;

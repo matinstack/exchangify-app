@@ -1,6 +1,6 @@
 "use server";
 import { db } from "@/db";
-import { cards, categories, transactions } from "@/db/schema";
+import { ActivityLog, cards, categories, transactions } from "@/db/schema";
 import {
   and,
   eq,
@@ -21,7 +21,7 @@ import {
   startOfMonth,
   endOfMonth,
   startOfYear,
-  endOfYear
+  endOfYear,
 } from "date-fns";
 import { alias } from "drizzle-orm/pg-core";
 
@@ -324,6 +324,20 @@ export const handleTransaction = async (
               eq(transactions.userId, id),
             ),
           );
+        await tx.insert(ActivityLog).values({
+          userId: id,
+          action: "transaction_updated",
+          entityId: transactionId,
+          entityType: "transaction",
+          metadata: {
+            oldAmount,
+            newAmount,
+            previousType,
+            previousCardId,
+            cardId,
+            transactionType,
+          },
+        });
 
         return;
       }
@@ -346,16 +360,19 @@ export const handleTransaction = async (
         throw new Error("INSUFFICIENT_BALANCE");
       }
 
-      await tx.insert(transactions).values({
-        userId: id,
-        cardId,
-        amount,
-        categoryId: subCategoryId,
-        transactionType,
-        note,
-        description,
-        date,
-      });
+      const [transaction] = await tx
+        .insert(transactions)
+        .values({
+          userId: id,
+          cardId,
+          amount,
+          categoryId: subCategoryId,
+          transactionType,
+          note,
+          description,
+          date,
+        })
+        .returning({ id: transactions.id });
 
       await tx
         .update(cards)
@@ -366,10 +383,22 @@ export const handleTransaction = async (
               : sql`${cards.balance} - ${amount}`,
         })
         .where(and(eq(cards.id, cardId), eq(cards.userId, id)));
+
+      await tx.insert(ActivityLog).values({
+        userId: id,
+        action: "transaction_created",
+        entityId: transaction.id,
+        entityType: "transaction",
+        metadata: {
+          amount,
+          type: transactionType,
+        },
+      });
     });
 
     updateTag(`transactions:${id}`);
     updateTag(`cards:${id}`);
+    updateTag(`activity-log:${id}`);
 
     return {
       success:
@@ -464,6 +493,17 @@ export const deleteTransactionById = async (transactionId: string) => {
         })
         .where(and(eq(cards.id, cardId), eq(cards.userId, userId)));
 
+      await tx.insert(ActivityLog).values({
+        userId: userId,
+        action: "transaction_deleted",
+        entityId: transactionId,
+        entityType: "transaction",
+        metadata: {
+          amount,
+          type: transactionType,
+        },
+      });
+
       return {
         success: "Transaction deleted",
       };
@@ -473,6 +513,7 @@ export const deleteTransactionById = async (transactionId: string) => {
       return res;
     }
 
+    updateTag(`activity-log:${userId}`);
     updateTag(`transactions:${userId}`);
     updateTag(`cards:${userId}`);
 
