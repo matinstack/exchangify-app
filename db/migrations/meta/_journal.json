@@ -43,6 +43,13 @@
       "when": 1783165503703,
       "tag": "0005_cute_havok",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1784277002168,
+      "tag": "0006_nervous_azazel",
+      "breakpoints": true
     }
   ]
 }
