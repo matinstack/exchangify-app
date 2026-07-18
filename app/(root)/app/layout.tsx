@@ -7,12 +7,12 @@ import HeaderSkeleton from "@/components/application/header/HeaderSkeleton";
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex h-screen bg-background">
-      <aside className="w-73.75 border-r flex flex-col">
+      <aside className="hidden md:block  w-73.75 border-r overflow-y-auto">
         <div className="ml-6 pt-7 mb-9 shrink-0">
           <Logo href="/app/dashboard" />
         </div>
 
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto ">
           <Sidebar />
         </div>
       </aside>
