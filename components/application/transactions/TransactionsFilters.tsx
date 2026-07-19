@@ -27,7 +27,7 @@ const TransactionsFilters = () => {
 
   return (
     <>
-      <InputGroup className="max-w-72 min-w-60">
+      <InputGroup className="max-w-72 min-w-50">
         <InputGroupInput placeholder="Search ..." />
         <InputGroupAddon>
           <Search />

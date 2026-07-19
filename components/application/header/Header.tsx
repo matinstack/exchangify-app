@@ -4,6 +4,7 @@ import Notifications from "@/components/application/header/Notifications";
 import UserProfile from "@/components/application/header/UserProfile";
 import { getSession } from "@/lib/auth-helpers";
 import { redirect } from "next/navigation";
+import MobileSidebar from "@/components/application/header/MobileSidebar";
 
 const Header = async () => {
   const session = await getSession();
@@ -17,11 +18,12 @@ const Header = async () => {
         </h1>
         <HeaderTitle />
       </div>
-      <div className={"flex gap-24"}>
+      <div className={"gap-24 flex items-start"}>
         <TimeDate />
-        <div className={"flex gap-8"}>
+        <div className={"flex  gap-8"}>
           <Notifications />
           <UserProfile />
+          <MobileSidebar />
         </div>
       </div>
     </header>

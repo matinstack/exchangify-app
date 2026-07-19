@@ -17,7 +17,11 @@ const TimeDate = () => {
 
   if (!currentTime) return <Skeleton className="h-4 w-48" />;
 
-  return <p>🕧 {currentTime.format("hh:mm A | DD MMMM YYYY")}</p>;
+  return (
+    <p className="hidden lg:block">
+      🕧 {currentTime.format("hh:mm A | DD MMMM YYYY")}
+    </p>
+  );
 };
 
 export default TimeDate;
