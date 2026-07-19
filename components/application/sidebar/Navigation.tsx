@@ -11,8 +11,14 @@ type NavigationProps = {
   header: string;
   link: Links[];
   separator?: boolean;
+  onNavigate?: () => void;
 };
-const Navigation = ({ header, link, separator = true }: NavigationProps) => {
+const Navigation = ({
+  header,
+  link,
+  onNavigate,
+  separator = true,
+}: NavigationProps) => {
   const pathname = usePathname();
   return (
     <div className={`mx-6 pb-3 mb-4 ${separator ? "border-b" : ""}`}>
@@ -23,6 +29,7 @@ const Navigation = ({ header, link, separator = true }: NavigationProps) => {
             <Link
               className={`${pathname === link.href && "bg-brand-accent"} transition duration-200 px-2  hover:bg-brand-accent group py-2 flex gap-3 items-center rounded-xs`}
               href={link.href}
+              onClick={onNavigate}
             >
               <span
                 className={`transition duration-200 text-brand group-hover:text-foreground`}

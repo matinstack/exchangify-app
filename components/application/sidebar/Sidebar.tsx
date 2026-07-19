@@ -8,7 +8,6 @@ import {
   ChartNoAxesCombinedIcon,
   FileClock,
   MessageCircleQuestionIcon,
-  LogOut,
   Settings,
 } from "lucide-react";
 
@@ -75,21 +74,28 @@ const otherNavigationData = {
   ],
 };
 
-const Sidebar = () => {
+type SidebarProps = {
+  onNavigate?: () => void;
+};
+
+const Sidebar = ({ onNavigate }: SidebarProps) => {
   return (
-    <nav>
+    <nav className="py-4">
       <Navigation
         header={generalNavigationData.header}
         link={generalNavigationData.link}
+        onNavigate={onNavigate}
       />
       <Navigation
         header={toolsNavigationData.header}
         link={toolsNavigationData.link}
+        onNavigate={onNavigate}
       />
       <Navigation
         header={otherNavigationData.header}
         link={otherNavigationData.link}
         separator={false}
+        onNavigate={onNavigate}
       />
     </nav>
   );
