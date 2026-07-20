@@ -55,7 +55,7 @@ import { cacheLife, cacheTag, updateTag } from "next/cache";
 async function getTransactionsCached(userId: string, query: Query) {
   "use cache";
 
-  cacheLife("minutes");
+  cacheLife("hours");
   cacheTag(`transactions:${userId}`);
 
   const { sortBy, page, limit, type, order, dateFilter } = query;
