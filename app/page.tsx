@@ -1,11 +1,20 @@
 import { Button } from "@/components/ui/button";
+import { SiteHeader } from "@/components/landing/site-header";
+import { Hero } from "@/components/landing/hero";
 
 function MainPage() {
   return (
-    <div>
-      <Button>test</Button>
-      Hello World
-    </div>
+    <>
+      <header>
+        <SiteHeader />
+      </header>
+      <main>
+        <section>
+          <Hero />
+        </section>
+      </main>
+      <footer></footer>
+    </>
   );
 }
 
