@@ -7,7 +7,7 @@ const HeaderTitle = () => {
   const pathname = usePathname();
 
   const title = handleTitle(pathname);
-  return <p>{title}</p>;
+  return <p className="md:text-lg text-sm\">{title}</p>;
 };
 
 export default HeaderTitle;
