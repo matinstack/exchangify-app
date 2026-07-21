@@ -19,13 +19,14 @@ const DateFilterDropDown = () => {
       <DropdownMenuTrigger asChild>
         <Button>
           <CalendarDays />
-
-          {dateFilter === "all" && "All Time"}
-          {dateFilter === "thisYear" && "YTD"}
-          {dateFilter === "3m" && "3M"}
-          {dateFilter === "thisMonth" && "1M"}
-          {dateFilter === "thisWeek" && "7D"}
-          {dateFilter === "today" && "1D"}
+          <span className="hidden sm:block">
+            {dateFilter === "all" && "All Time"}
+            {dateFilter === "thisYear" && "YTD"}
+            {dateFilter === "3m" && "3M"}
+            {dateFilter === "thisMonth" && "1M"}
+            {dateFilter === "thisWeek" && "7D"}
+            {dateFilter === "today" && "1D"}
+          </span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-fit">

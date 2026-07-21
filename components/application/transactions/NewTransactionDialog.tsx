@@ -52,7 +52,7 @@ const NewTransactionDialog = ({
     <Dialog>
       <DialogTrigger asChild>
         <Button>
-          <Plus /> <span>New Transaction</span>
+          <Plus /> <span className="hidden sm:block">New Transaction</span>
         </Button>
       </DialogTrigger>
       <DialogContent

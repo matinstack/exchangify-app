@@ -12,11 +12,12 @@ const Dashboard = () => {
         <ExpenseChart />
         <TopCategoryChart />
       </div>
-      <div className={"grid xl:grid-cols-6 w-full gap-7"}>
-        <div className={"xl:col-span-4"}>
+      <div className="flex flex-col xl:flex-row gap-7">
+        <div className="xl:w-2/3">
           <RecentExpensesTable />
         </div>
-        <div className={"xl:col-span-2"}>
+
+        <div className="xl:w-1/3">
           <BillsTable />
         </div>
       </div>

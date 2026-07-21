@@ -40,19 +40,19 @@ const TransactionsFilters = () => {
             {filter === "all" && (
               <>
                 <Funnel />
-                Filter
+                <span className="hidden sm:block">Filter</span>
               </>
             )}
             {filter === "expense" && (
               <>
                 <Funnel className="fill-background" />
-                Expenses
+                <span className="hidden sm:block">Expenses</span>
               </>
             )}
             {filter === "income" && (
               <>
                 <Funnel className="fill-background" />
-                Incomes
+                <span className="hidden sm:block">Incomes</span>
               </>
             )}
           </Button>

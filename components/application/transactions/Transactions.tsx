@@ -32,7 +32,7 @@ export type GetTransactionsResponse = {
 
 const Transactions = ({ data, pagination }: GetTransactionsResponse) => {
   return (
-    <div className="py-9">
+    <div className="md:py-9 ">
       <TransactionsHeader />
       <TransactionsTable data={data} />
       {pagination.totalPages > 1 && <PagePagination pagination={pagination} />}

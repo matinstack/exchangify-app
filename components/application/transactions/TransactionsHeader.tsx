@@ -4,8 +4,8 @@ import NewTransaction from "@/components/application/transactions/NewTransaction
 const TransactionsHeader = () => {
   return (
     <div className="mb-6 flex flex-col xl:flex-row gap-4">
-      <div className="flex md:flex-1 ">
-        <h2 className="text-2xl font-normal md:flex-1">
+      <div className="flex md:flex-1 items-center justify-between gap-2">
+        <h2 className="md:text-2xl text-lg font-normal md:flex-1">
           Transactions Activity
         </h2>
 
