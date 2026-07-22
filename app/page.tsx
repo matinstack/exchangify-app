@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { SiteHeader } from "@/components/landing/site-header";
 import { Hero } from "@/components/landing/hero";
+import { Features } from "@/components/landing/features";
 
 function MainPage() {
   return (
@@ -9,9 +10,8 @@ function MainPage() {
         <SiteHeader />
       </header>
       <main>
-        <section>
-          <Hero />
-        </section>
+        <Hero />
+        <Features />
       </main>
       <footer></footer>
     </>
