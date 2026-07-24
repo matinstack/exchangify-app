@@ -1,6 +1,6 @@
 import { ArrowRight, Sparkles, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { DashboardMockup } from "./dashboard-mockup";
+// import { DashboardMockup } from "./dashboard-mockup";
 
 export function Hero() {
   return (
@@ -77,7 +77,7 @@ export function Hero() {
           />
           <div className="[perspective:2000px]">
             <div className="[transform:rotateX(2deg)]">
-              <DashboardMockup />
+              {/*<DashboardMockup />*/}
             </div>
           </div>
           {/* fade bottom into page */}
