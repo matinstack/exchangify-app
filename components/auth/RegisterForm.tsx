@@ -12,7 +12,6 @@ import { toast } from "sonner";
 import { RegisterAction } from "@/actions/auth/Register";
 
 const RegisterForm = () => {
-  const [isRedirecting, setIsRedirecting] = useState(false);
   const [showPassword, setShowPassword] = useState({
     password: false,
     confirmPassword: false,
@@ -22,7 +21,6 @@ const RegisterForm = () => {
     formState: { errors, isSubmitting },
     register,
     handleSubmit,
-    reset,
   } = useForm<RegisterSchemaType>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
@@ -35,14 +33,12 @@ const RegisterForm = () => {
   });
 
   const onSubmit = async (data: RegisterSchemaType) => {
-    setIsRedirecting(true);
     const res = await RegisterAction(data);
+    console.log(res);
     if (res && res.error) {
-      setIsRedirecting(false);
       toast.error(res.error, { position: "top-center" });
       return;
     }
-    reset();
     toast.success("Account successfully registered!");
   };
 
@@ -57,7 +53,7 @@ const RegisterForm = () => {
           placeholder={"John"}
           id={"name"}
           aria-invalid={!!errors.name}
-          disabled={isSubmitting || isRedirecting}
+          disabled={isSubmitting}
         />
         {!!errors.name && (
           <FieldDescription className={"text-xs text-destructive"}>
@@ -73,7 +69,7 @@ const RegisterForm = () => {
           placeholder={"Doe"}
           id={"lastName"}
           aria-invalid={!!errors.lastName}
-          disabled={isSubmitting || isRedirecting}
+          disabled={isSubmitting}
         />
         {!!errors.lastName && (
           <FieldDescription className={"text-xs text-destructive"}>
@@ -89,7 +85,7 @@ const RegisterForm = () => {
           placeholder={"john.doe@example.com"}
           id={"email"}
           aria-invalid={!!errors.email}
-          disabled={isSubmitting || isRedirecting}
+          disabled={isSubmitting}
         />
         {!!errors.email && (
           <FieldDescription className={"text-xs text-destructive"}>
@@ -108,7 +104,7 @@ const RegisterForm = () => {
             id={"password"}
             aria-invalid={!!errors.password}
             className="pr-10"
-            disabled={isSubmitting || isRedirecting}
+            disabled={isSubmitting}
           />
           <Button
             onClick={() =>
@@ -150,7 +146,7 @@ const RegisterForm = () => {
             id={"confirmPassword"}
             aria-invalid={!!errors.confirmPassword}
             className="pr-10"
-            disabled={isSubmitting || isRedirecting}
+            disabled={isSubmitting}
           />
           <Button
             onClick={() =>
@@ -182,13 +178,9 @@ const RegisterForm = () => {
           </FieldDescription>
         )}
       </Field>
-      <Button
-        variant="default"
-        type="submit"
-        disabled={isSubmitting || isRedirecting}
-      >
-        {isSubmitting || isRedirecting ? "Creating account..." : "Register"}
-        {(isSubmitting || isRedirecting) && <Spinner />}
+      <Button variant="default" type="submit" disabled={isSubmitting}>
+        {isSubmitting ? "Creating account..." : "Register"}
+        {isSubmitting && <Spinner />}
       </Button>
     </form>
   );
