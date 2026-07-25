@@ -12,13 +12,14 @@ import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
 
 const RegisterForm = () => {
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const [showPassword, setShowPassword] = useState({
     password: false,
     confirmPassword: false,
   });
 
   const {
-    formState: { errors, isSubmitting, isSubmitted },
+    formState: { errors, isSubmitting },
     register,
     reset,
     handleSubmit,
@@ -31,13 +32,16 @@ const RegisterForm = () => {
   });
 
   const onSubmit = async (data: LoginSchemaType) => {
+    setIsRedirecting(true);
     const res = await LoginAction(data);
 
     if (res.error) {
+      setIsRedirecting(false);
       toast.error(res.error, { position: "top-center" });
       return;
     }
     toast.success("Successfully Logged in!", { position: "top-center" });
+    reset();
   };
 
   return (
@@ -50,7 +54,7 @@ const RegisterForm = () => {
           placeholder={"john.doe@example.com"}
           id={"email"}
           aria-invalid={!!errors.email}
-          disabled={isSubmitting}
+          disabled={isSubmitting || isRedirecting}
         />
         {!!errors.email && (
           <FieldDescription className={"text-xs text-destructive"}>
@@ -69,7 +73,7 @@ const RegisterForm = () => {
             id={"password"}
             aria-invalid={!!errors.password}
             className="pr-10"
-            disabled={isSubmitting}
+            disabled={isSubmitting || isRedirecting}
           />
           <Button
             onClick={() =>
@@ -100,9 +104,13 @@ const RegisterForm = () => {
           </FieldDescription>
         )}
       </Field>
-      <Button variant="default" type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Logging in..." : "Login"}
-        {isSubmitting && <Spinner />}
+      <Button
+        variant="default"
+        type="submit"
+        disabled={isSubmitting || isRedirecting}
+      >
+        {isSubmitting || isRedirecting ? "Logging in..." : "Login"}
+        {(isSubmitting || isRedirecting) && <Spinner />}
       </Button>
     </form>
   );
