@@ -8,8 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Calendar, CalendarDays } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTransition } from "react";
 
 const DateFilterDropDown = () => {
+  const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -37,14 +39,17 @@ const DateFilterDropDown = () => {
 
             if (e === "all") {
               params.delete("dateFilter");
-              router.replace(`?${params.toString()}`);
             } else {
               params.set("dateFilter", e);
-              router.replace(`?${params.toString()}`);
             }
+            startTransition(() => {
+              router.replace(`?${params.toString()}`);
+            });
           }}
         >
-          <TabsList>
+          <TabsList
+            className={`${isPending ? "opacity-50 pointer-events-none" : ""}`}
+          >
             <TabsTrigger value="today">1D</TabsTrigger>
             <TabsTrigger value="thisWeek">7D</TabsTrigger>
             <TabsTrigger value="thisMonth">1M</TabsTrigger>
