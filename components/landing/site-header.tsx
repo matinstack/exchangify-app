@@ -5,6 +5,7 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/shared/Logo";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 const navLinks = [
   { label: "Features", href: "#features" },
@@ -49,10 +50,12 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
-          <Button variant="ghost" className="h-9 px-4">
-            Sign in
-          </Button>
-          <Button className="h-9 px-4">Start free</Button>
+          <Link href={"/auth/login"}>
+            <Button variant="ghost" className="h-9 px-4">
+              Sign in
+            </Button>
+            {/* <Button className="h-9 px-4">Start free</Button> */}
+          </Link>
         </div>
 
         <Button
@@ -84,10 +87,12 @@ export function SiteHeader() {
               </a>
             ))}
             <div className="mt-2 flex flex-col gap-2">
-              <Button variant="outline" className="h-10">
-                Sign in
-              </Button>
-              <Button className="h-10">Start free</Button>
+              <Link href={"/auth/login"}>
+                <Button variant="outline" className="h-10">
+                  Sign in
+                </Button>
+                {/* <Button className="h-10">Start free</Button> */}
+              </Link>
             </div>
           </nav>
         </div>

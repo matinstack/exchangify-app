@@ -1,5 +1,6 @@
 import { ArrowRight, Sparkles, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 // import { DashboardMockup } from "./dashboard-mockup";
 
 export function Hero() {
@@ -16,8 +17,8 @@ export function Hero() {
       </div>
 
       <div className="mx-auto max-w-6xl px-4 text-center sm:px-6">
-        <a
-          href="#features"
+        <Link
+          href="#"
           className="group mx-auto inline-flex items-center gap-2 rounded-full border border-border bg-card/60 py-1 pl-1 pr-3 text-xs text-muted-foreground backdrop-blur transition-colors hover:text-foreground"
         >
           <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 font-medium text-primary">
@@ -26,7 +27,7 @@ export function Hero() {
           </span>
           AI-powered spending insights
           <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
-        </a>
+        </Link>
 
         <h1 className="mx-auto mt-6 max-w-3xl text-balance text-4xl font-semibold tracking-tight text-gradient sm:text-5xl md:text-6xl">
           The finance workspace that keeps your money on track
@@ -38,16 +39,18 @@ export function Hero() {
         </p>
 
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Button className="h-11 w-full px-6 text-sm shadow-lg shadow-primary/20 sm:w-auto">
-            Start tracking for free
-            <ArrowRight className="size-4" />
-          </Button>
-          <Button
+          <Link href={"/auth/register"}>
+            <Button className="h-11 w-full px-6 text-sm shadow-lg shadow-primary/20 sm:w-auto">
+              Start tracking for free
+              <ArrowRight className="size-4" />
+            </Button>
+          </Link>
+          {/* <Button
             variant="outline"
             className="h-11 w-full px-6 text-sm sm:w-auto"
           >
             View live demo
-          </Button>
+          </Button> */}
         </div>
 
         <div className="mt-5 flex flex-col items-center justify-center gap-2 text-xs text-muted-foreground sm:flex-row sm:gap-4">
