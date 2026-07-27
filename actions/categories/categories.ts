@@ -8,6 +8,7 @@ import { db } from "@/db";
 import { categories } from "@/db/schema";
 import { and, eq, ilike, or } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+
 export const createCategory = async (values: CreateCategoryType) => {
   const session = await getSession();
   if (!session || !session.user.id) {
@@ -21,7 +22,7 @@ export const createCategory = async (values: CreateCategoryType) => {
     return { error: "Invalid Fields" };
   }
 
-  const { name, parentId, categoryType, icon } = validatedFields.data;
+  const { name, parentId, categoryType, iconKey } = validatedFields.data;
 
   try {
     const [category] = await db
@@ -41,18 +42,18 @@ export const createCategory = async (values: CreateCategoryType) => {
       };
     }
 
-    let imageUrl = "";
-    if (icon) {
-      // ُTODO upload image to bucket
-      imageUrl = "https://example.com/path-to-image.png";
-    }
+    // let imageUrl = "";
+    // if (iconKey) {
+    //   // ُTODO upload image to bucket
+    //   imageUrl = "https://example.com/path-to-image.png";
+    // }
 
     await db.insert(categories).values({
       userId: id,
       name,
       parentId: parentId ?? null,
       isDefault: true,
-      icon: imageUrl ?? null,
+      icon: iconKey ?? null,
       type: categoryType,
     });
 

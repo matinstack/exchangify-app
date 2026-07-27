@@ -11,8 +11,10 @@ import { Button } from "@/components/ui/button";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createCategory } from "@/actions/categories/categories";
+import { uploadWithProgress } from "@/lib/upload-with-progress";
 import {
   createCategorySchema,
+  imageMetaSchema,
   type CreateCategoryType,
 } from "@/schema/categories";
 import {
@@ -33,7 +35,13 @@ import {
 } from "@/components/ui/select";
 import FormSubmitButton from "@/components/shared/FormSubmitButton";
 import { toast } from "sonner";
+import { useState } from "react";
+import { getCategoryIconUploudUrl } from "@/actions/categories/upload";
 const NewCategoryForm = () => {
+  const [iconFile, setIconFile] = useState<File | null>(null);
+  const [iconError, setIconError] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
   const {
     register,
     handleSubmit,
@@ -44,14 +52,52 @@ const NewCategoryForm = () => {
     resolver: zodResolver(createCategorySchema),
     defaultValues: {
       name: "",
-      icon: undefined,
+      iconKey: undefined,
       categoryType: "" as unknown as CreateCategoryType["categoryType"],
       parentId: undefined,
     },
   });
+  const handleFileChange = (file: File | undefined) => {
+    setIconError(null);
+    if (!file) {
+      setIconFile(null);
+      return;
+    }
+    const res = imageMetaSchema.safeParse({
+      fileName: file.name,
+      fileType: file.type,
+      fileSize: file.size,
+    });
+    if (!res.success) {
+      setIconError(res.error.issues[0].message);
+      setIconFile(null);
+      return;
+    }
+    setIconFile(file);
+  };
 
   const onSubmit = async (values: CreateCategoryType) => {
-    const res = await createCategory(values);
+    let iconKey: string | undefined;
+
+    if (iconFile) {
+      setUploading(true);
+
+      try {
+        const { url, key } = await getCategoryIconUploudUrl({
+          fileName: iconFile.name,
+          fileType: iconFile.type,
+          fileSize: iconFile.size,
+        });
+        await uploadWithProgress(url, iconFile, setProgress);
+        iconKey = key;
+      } catch (err) {
+        toast.error("Image uploading failed.", { position: "top-center" });
+        setUploading(false);
+        return;
+      }
+      setUploading(false);
+    }
+    const res = await createCategory({ ...values, iconKey });
 
     if (res.error) {
       toast.error(res.error, { position: "top-center" });
@@ -130,18 +176,29 @@ const NewCategoryForm = () => {
                   <FieldError>{errors.categoryType.message}</FieldError>
                 )}
               </Field>
-              <Field data-invalid={!!errors.icon}>
-                <FieldLabel htmlFor="icon">
+              <Field data-invalid={!!iconError}>
+                <FieldLabel htmlFor="iconKey">
                   Image <span className="text-[9px] pl-2">Optional</span>
                 </FieldLabel>
-                <Input
-                  {...register("icon")}
-                  accept="image/*"
-                  type="file"
-                  id="icon"
+                <Controller
+                  name="iconKey"
+                  control={control}
+                  render={({ field: { onChange } }) => (
+                    <Input
+                      accept="image/*"
+                      type="file"
+                      id="icon"
+                      onChange={(e) =>
+                        onChange(handleFileChange(e.target.files?.[0]))
+                      }
+                    />
+                  )}
                 />
-                {/* TODO AFTER Better Schema and Error Handling*/}
-                {/*{errors.icon && <FieldError>{errors.icon.message}</FieldError>}*/}
+
+                {iconError && <FieldError>{iconError}</FieldError>}
+                {uploading && (
+                  <p className="text-xs">Uploading... {progress}%</p>
+                )}
               </Field>
 
               <Field className="pb-4">

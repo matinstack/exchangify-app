@@ -26,10 +26,12 @@ const Header = async () => {
       </div>
       <div className={"gap-24 flex items-start"}>
         <TimeDate />
-        <div className={"flex  gap-8"}>
+        <div className={"flex gap-3 sm:gap-5"}>
           <Notifications />
           <UserProfile />
-          <MobileSidebar />
+          <div className="ml-2 sm:ml-0">
+            <MobileSidebar />
+          </div>
         </div>
       </div>
     </header>

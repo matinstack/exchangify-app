@@ -10,7 +10,8 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { useTransition } from "react";
 
 type PaginationProps = {
   total: number;
@@ -26,6 +27,8 @@ type PaginationAction = "previous" | "next" | "list";
 const PagePagination = ({ pagination }: { pagination: PaginationProps }) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
   function getPaginationPages(
     currentPage: number,
@@ -64,7 +67,7 @@ const PagePagination = ({ pagination }: { pagination: PaginationProps }) => {
     pagination.totalPages,
   );
 
-  function handlePagination(type: PaginationAction, pageNumber?: number) {
+  function getPaginationUrl(type: PaginationAction, pageNumber?: number) {
     const params = new URLSearchParams(searchParams);
 
     const currentPage = Number(params.get("page") ?? 1);
@@ -99,13 +102,26 @@ const PagePagination = ({ pagination }: { pagination: PaginationProps }) => {
       }
     }
   }
+  function navigateTo(url: string) {
+    startTransition(() => {
+      router.push(url);
+    });
+  }
 
   return (
     <Pagination>
-      <PaginationContent>
+      <PaginationContent
+        className={`${isPending ? "opacity-50 pointer-events-none" : ""}`}
+      >
         {pagination.hasPreviousPage && (
           <PaginationItem>
-            <PaginationPrevious href={handlePagination("previous")} />
+            <PaginationPrevious
+              onClick={(e) => {
+                e.preventDefault();
+                navigateTo(getPaginationUrl("previous"));
+              }}
+              href={getPaginationUrl("previous")}
+            />
           </PaginationItem>
         )}
 
@@ -116,7 +132,11 @@ const PagePagination = ({ pagination }: { pagination: PaginationProps }) => {
             <PaginationItem key={`page-${item}`}>
               <PaginationLink
                 isActive={pagination.page === item}
-                href={handlePagination("list", item)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigateTo(getPaginationUrl("list", item));
+                }}
+                href={getPaginationUrl("list", item)}
               >
                 {item}
               </PaginationLink>
@@ -126,7 +146,13 @@ const PagePagination = ({ pagination }: { pagination: PaginationProps }) => {
 
         {pagination.hasNextPage && (
           <PaginationItem>
-            <PaginationNext href={handlePagination("next")} />
+            <PaginationNext
+              onClick={(e) => {
+                e.preventDefault();
+                navigateTo(getPaginationUrl("next"));
+              }}
+              href={getPaginationUrl("next")}
+            />
           </PaginationItem>
         )}
       </PaginationContent>

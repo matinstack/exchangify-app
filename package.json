@@ -12,6 +12,8 @@
     "generate": "node scripts/generate.js"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1095.0",
+    "@aws-sdk/s3-request-presigner": "^3.1095.0",
     "@better-auth/drizzle-adapter": "^1.6.21",
     "@hookform/resolvers": "^5.4.0",
     "@recharts/devtools": "^0.0.14",
