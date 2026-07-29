@@ -30,6 +30,7 @@ const RegisterPage = () => {
         alt={"Registering"}
         height={700}
         width={700}
+        loading="eager"
       />
     </div>
   );
