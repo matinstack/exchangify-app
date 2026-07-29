@@ -33,6 +33,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { addNewCard } from "@/actions/cards/addNewCard";
 import FormSubmitButton from "@/components/shared/FormSubmitButton";
+import { useRouter } from "next/navigation";
+import { runAction } from "@/lib/errors/runAction";
 const bankTypeItems = [
   { label: "Iranian Bank", value: "iranianBank" },
   { label: "Visa", value: "visa" },
@@ -73,6 +75,7 @@ const currencyItems = [
 ];
 const AddNewCardForm = () => {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
   const {
     register,
     control,
@@ -93,14 +96,11 @@ const AddNewCardForm = () => {
   });
 
   const onSubmit = async (values: NewCardSchemaType) => {
-    const res = await addNewCard(values);
+    const res = await runAction(addNewCard(values));
 
-    if (res.error) {
-      toast.error(res.error, { position: "top-center" });
-      return;
-    }
-
-    toast.success(res.success, { position: "top-center" });
+    if (!res.success) return;
+    console.log(res);
+    toast.success(res.data.message, { position: "top-center" });
     setOpen(false);
     reset();
   };

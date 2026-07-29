@@ -5,21 +5,15 @@ import { db } from "@/db";
 import { eq } from "drizzle-orm";
 import { ActivityLog, cards } from "@/db/schema";
 import { updateTag } from "next/cache";
+import { withAction } from "@/lib/errors/error-handler";
+import { AppError } from "@/lib/errors/AppError";
 
-export const addNewCard = async (values: NewCardSchemaType) => {
+export const addNewCard = withAction(async (values: NewCardSchemaType) => {
+  console.log("ADD NEW CARD START");
   const session = await getSession();
 
-  if (!session || !session.user.id) {
-    throw new Error("Unauthorized! Please login again.");
-  }
-  // ُTODO: Balance Too large Number BUG
-  const validatedFields = NewCardSchema.safeParse(values);
+  // TODO: Balance Too large Number BUG
 
-  if (!validatedFields.success) {
-    return {
-      error: "Invalid Fields!",
-    };
-  }
   const {
     cardNumber,
     cardColor,
@@ -28,7 +22,7 @@ export const addNewCard = async (values: NewCardSchemaType) => {
     optionalName,
     currency,
     cardType,
-  } = validatedFields.data;
+  } = NewCardSchema.parse(values);
 
   const existingCard = await db
     .select({ id: cards.id })
@@ -36,50 +30,37 @@ export const addNewCard = async (values: NewCardSchemaType) => {
     .where(eq(cards.cardNumber, cardNumber))
     .limit(1);
 
-  if (existingCard.length > 0) {
-    return { error: "You already have a card with this card number." };
-  }
+  if (existingCard.length > 0) throw new AppError("CARD_ALREADY_EXISTS");
 
-  try {
-    await db.transaction(async (tx) => {
-      const [card] = await tx
-        .insert(cards)
-        .values({
-          cardNumber,
-          userId: session.user.id,
-          cardColor,
-          bankName,
-          balance,
-          customName: optionalName,
-          type: cardType,
-          currency,
-        })
-        .returning({ id: cards.id });
-
-      await tx.insert(ActivityLog).values({
+  await db.transaction(async (tx) => {
+    const [card] = await tx
+      .insert(cards)
+      .values({
+        cardNumber,
         userId: session.user.id,
-        action: "card_created",
-        entityType: "account",
-        entityId: card.id,
-        metadata: {
-          bankName,
-          currency,
-        },
-      });
+        cardColor,
+        bankName,
+        balance,
+        customName: optionalName,
+        type: cardType,
+        currency,
+      })
+      .returning({ id: cards.id });
+
+    await tx.insert(ActivityLog).values({
+      userId: session.user.id,
+      action: "card_created",
+      entityType: "account",
+      entityId: card.id,
+      metadata: {
+        bankName,
+        currency,
+      },
     });
+  });
 
-    updateTag(`cards:${session.user.id}`);
-    updateTag(`activity-log:${session.user.id}`);
+  updateTag(`cards:${session.user.id}`);
+  updateTag(`activity-log:${session.user.id}`);
 
-    return { success: "Card added successfully!" };
-  } catch (err) {
-    console.error("DB Insert Error", err);
-
-    return {
-      error:
-        err instanceof Error
-          ? `Database Error ${err.message}`
-          : "An Unexpected database error occurred.",
-    };
-  }
-};
+  return { message: "Card added successfully!" };
+});
