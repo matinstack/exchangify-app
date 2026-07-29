@@ -11,6 +11,7 @@ export default async function proxy(req: NextRequest) {
   const session = await auth.api.getSession({
     headers: req.headers,
   });
+  const isServerAction = req.headers.has("next-action");
 
   const isLoggedIn = !!session;
   const { nextUrl } = req;
@@ -27,6 +28,8 @@ export default async function proxy(req: NextRequest) {
 
   if (isProtectedRoute) {
     if (isLoggedIn) return NextResponse.next();
+
+    if (isServerAction) return NextResponse.next();
 
     return NextResponse.redirect(new URL("/auth/login", nextUrl));
   }
