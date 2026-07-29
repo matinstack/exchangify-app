@@ -29,7 +29,7 @@ const AUTH_ERRORS = {
   },
   TOKEN_EXPIRED: {
     code: "AUTH_ERR_003",
-    message: "Your Session Was Expired.",
+    message: "Your Session Has Expired. Please Sign In Again.",
     status: 401,
   },
 } as const;
@@ -56,6 +56,11 @@ const BUSINESS_ERRORS = {
   INSUFFICIENT_FUNDS: {
     code: "PAY_ERR_001",
     message: "Not Enough Balance",
+    status: 400,
+  },
+  CARD_ALREADY_EXISTS: {
+    code: "CARD_ERR_001",
+    message: "You Have Same Card With This Card Number",
     status: 400,
   },
 } as const;
