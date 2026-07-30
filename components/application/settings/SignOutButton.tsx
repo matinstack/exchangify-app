@@ -5,6 +5,7 @@ import { authClient } from "@/lib/auth-client";
 const SignOutButton = () => {
   return (
     <Button
+      variant={"destructive"}
       onClick={async () => {
         await authClient.signOut({
           fetchOptions: {
