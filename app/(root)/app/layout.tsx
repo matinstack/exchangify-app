@@ -18,7 +18,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       </aside>
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="px-9 pt-7 shrink-0">
+        <div className="shrink-0  border-b border-border">
           <Suspense fallback={<HeaderSkeleton />}>
             <Header />
           </Suspense>

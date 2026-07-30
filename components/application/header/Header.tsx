@@ -12,19 +12,19 @@ const Header = async () => {
   if (!session || !session.user.id) redirect("/auth/login");
   const { name, lastName } = session.user;
   return (
-    <header className={"flex justify-between md:pb-2 pb-4"}>
+    <header className={"flex justify-between items-center md:py-5 py-3 px-8"}>
       <div>
         <div className="block md:hidden">
           <Logo href={"/"} />
         </div>
-        <div className="mt-4 md:mt-0 hidden md:block">
-          <h1 className="hidden md:block  text-lg md:text-2xl font-normal">
+        <div className=" md:mt-0 hidden md:space-y-2 md:block">
+          <h1 className="hidden md:block   text-lg md:text-2xl font-normal">
             Welcome {name} {lastName} 👋
           </h1>
           <HeaderTitle />
         </div>
       </div>
-      <div className={"gap-24 flex items-start"}>
+      <div className={"gap-18 flex items-center"}>
         <TimeDate />
         <div className={"flex gap-3 sm:gap-5"}>
           <Notifications />
