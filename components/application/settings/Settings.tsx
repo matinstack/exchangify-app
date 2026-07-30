@@ -1,0 +1,40 @@
+import { Suspense } from "react";
+import DarkModeToggle from "@/components/shared/dark-mode-toggle";
+import NewCategoryForm from "@/components/application/settings/NewCategoryForm";
+import NewSubCategoryDialog from "@/components/application/settings/NewSubCategoryDialog";
+import SignOutButton from "@/components/application/settings/SignOutButton";
+import NewSubCategoryDialogSkeleton from "@/components/application/settings/NewSubCategoryDialogSkeleton";
+import { SettingWrapper } from "./SettingWrapper";
+export const Settings = () => {
+  return (
+    <div className="flex flex-col gap-14 justify-center items-center py-8">
+      <SettingWrapper
+        title="Appearance"
+        subTitle="Choose your preferred theme for the application."
+      >
+        <DarkModeToggle />
+      </SettingWrapper>
+      <SettingWrapper
+        title="Categories"
+        subTitle="Create, edit, or remove categories to organize your transactions."
+      >
+        <NewCategoryForm />
+      </SettingWrapper>
+      <SettingWrapper
+        title="Subcategories"
+        subTitle="Manage subcategories to better classify your income and expenses."
+      >
+        <Suspense fallback={<NewSubCategoryDialogSkeleton />}>
+          <NewSubCategoryDialog />
+        </Suspense>
+      </SettingWrapper>
+      <SettingWrapper
+        destructive
+        title="Sign Out"
+        subTitle="Sign out securely from your account on this device."
+      >
+        <SignOutButton />
+      </SettingWrapper>
+    </div>
+  );
+};
