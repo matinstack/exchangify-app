@@ -10,6 +10,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { LoginAction } from "@/actions/auth/Login";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
+import { handleAction } from "@/lib/errors/runAction";
 
 const RegisterForm = () => {
   const [isRedirecting, setIsRedirecting] = useState(false);
@@ -33,11 +34,11 @@ const RegisterForm = () => {
 
   const onSubmit = async (data: LoginSchemaType) => {
     setIsRedirecting(true);
-    const res = await LoginAction(data);
+    const res = await handleAction(LoginAction(data));
 
-    if (res.error) {
+    if (!res.success) {
       setIsRedirecting(false);
-      toast.error(res.error, { position: "top-center" });
+      toast.error(res.error.message, { position: "top-center" });
       return;
     }
     toast.success("Successfully Logged in!", { position: "top-center" });

@@ -8,10 +8,11 @@ import {
 } from "@/components/ui/dialog";
 import { TransactionDialogProps } from "@/components/application/transactions/TransactionDropDownParent";
 import { toast } from "sonner";
-import { deleteTransactionById } from "@/actions/transactions/transactions";
+import { deleteTransactionById } from "@/actions/transactions/deleteTransaction";
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
+import { handleAction } from "@/lib/errors/runAction";
 
 function DeleteTransactionAction({
   transaction,
@@ -19,13 +20,13 @@ function DeleteTransactionAction({
   setIsOpen,
 }: TransactionDialogProps) {
   const handleDelete = async () => {
-    const res = await deleteTransactionById(transaction.id);
-    if (res.error) {
-      toast.error(res.error, { position: "top-center" });
+    const res = await handleAction(deleteTransactionById(transaction.id));
+    if (!res.success) {
+      toast.error(res.error.message, { position: "top-center" });
       setIsOpen(false);
       return;
     }
-    toast.success(res.success, { position: "top-center" });
+    toast.success(res.data.message, { position: "top-center" });
     setIsOpen(false);
     return;
   };

@@ -26,6 +26,7 @@ import {
 import FormSubmitButton from "@/components/shared/FormSubmitButton";
 import { toast } from "sonner";
 import { MainCategories } from "@/data/categories";
+import { handleAction } from "@/lib/errors/runAction";
 
 type Props = {
   categories: MainCategories;
@@ -53,19 +54,20 @@ const NewSubCategoryForm = ({ categories }: Props) => {
     control,
     name: "categoryType",
   });
+
   const filteredCategories = categories.filter(
     (category) => category.type === categoryType,
   );
 
   const onSubmit = async (values: CreateSubCategoryType) => {
     console.log(values);
-    const res = await createCategory(values);
+    const res = await handleAction(createCategory(values));
 
-    if (res.error) {
-      toast.error(res.error, { position: "top-center" });
+    if (!res.success) {
+      toast.error(res.error.message, { position: "top-center" });
       return;
     }
-    toast.success(res.success, { position: "top-center" });
+    toast.success(res.data.message, { position: "top-center" });
     reset();
   };
   return (

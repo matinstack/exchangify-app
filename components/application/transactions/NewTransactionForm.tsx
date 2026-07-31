@@ -24,8 +24,9 @@ import {
 import { Input } from "@/components/ui/input";
 import FormSubmitButton from "@/components/shared/FormSubmitButton";
 import { Textarea } from "@/components/ui/textarea";
-import { handleTransaction } from "@/actions/transactions/transactions";
+import { handleTransaction } from "@/actions/transactions/handleTransactions";
 import { toast } from "sonner";
+import { handleAction } from "@/lib/errors/runAction";
 
 const NewTransactionForm = ({
   categories,
@@ -99,14 +100,16 @@ const NewTransactionForm = ({
     let res;
 
     if (defaultValues) {
-      res = await handleTransaction(values, "update", defaultValues.id);
-    } else res = await handleTransaction(values, "create");
+      res = await handleAction(
+        handleTransaction(values, "update", defaultValues.id),
+      );
+    } else res = await handleAction(handleTransaction(values, "create"));
 
-    if (res.error) {
-      toast.error(res.error, { position: "top-center" });
+    if (!res.success) {
+      toast.error(res.error.message, { position: "top-center" });
       return;
     }
-    toast.success(res.success, { position: "top-center" });
+    toast.success(res.data.message, { position: "top-center" });
   };
 
   return (

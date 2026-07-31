@@ -37,6 +37,7 @@ import FormSubmitButton from "@/components/shared/FormSubmitButton";
 import { toast } from "sonner";
 import { useState } from "react";
 import { getCategoryIconUploudUrl } from "@/actions/categories/upload";
+import { handleAction } from "@/lib/errors/runAction";
 const NewCategoryForm = () => {
   const [iconFile, setIconFile] = useState<File | null>(null);
   const [iconError, setIconError] = useState<string | null>(null);
@@ -97,13 +98,13 @@ const NewCategoryForm = () => {
       }
       setUploading(false);
     }
-    const res = await createCategory({ ...values, iconKey });
+    const res = await handleAction(createCategory({ ...values, iconKey }));
 
-    if (res.error) {
-      toast.error(res.error, { position: "top-center" });
+    if (!res.success) {
+      toast.error(res.error.message, { position: "top-center" });
       return;
     }
-    toast.success(res.success, { position: "top-center" });
+    toast.success(res.data.message, { position: "top-center" });
     reset();
 
     console.log(values);

@@ -10,6 +10,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
 import { RegisterAction } from "@/actions/auth/Register";
+import { handleAction } from "@/lib/errors/runAction";
 
 const RegisterForm = () => {
   const [isRedirecting, setIsRedirecting] = useState(false);
@@ -36,10 +37,10 @@ const RegisterForm = () => {
 
   const onSubmit = async (data: RegisterSchemaType) => {
     setIsRedirecting(true);
-    const res = await RegisterAction(data);
-    if (res && res.error) {
+    const res = await handleAction(RegisterAction(data));
+    if (!res.success) {
       setIsRedirecting(false);
-      toast.error(res.error, { position: "top-center" });
+      toast.error(res.error.message, { position: "top-center" });
       return;
     }
     reset();
