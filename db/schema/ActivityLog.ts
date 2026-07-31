@@ -17,6 +17,7 @@ export const entityTypeEnum = pgEnum("entity_type", [
   "goal",
   "category",
   "user",
+  "card",
 ]);
 
 export const activityActionEnum = pgEnum("activity_action", [
