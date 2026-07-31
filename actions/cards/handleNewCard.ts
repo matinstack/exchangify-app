@@ -8,7 +8,7 @@ import { updateTag } from "next/cache";
 import { createAction } from "@/lib/errors/error-handler";
 import { AppError } from "@/lib/errors/AppError";
 
-export const addNewCard = createAction(async (values: NewCardSchemaType) => {
+export const handleNewCard = createAction(async (values: NewCardSchemaType) => {
   console.log("ADD NEW CARD START");
   const session = await getSession();
 
