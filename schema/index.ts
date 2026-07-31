@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { patterns } from "@/lib/patterns";
+import { patterns } from "@/schema/patterns";
 
 export const LoginSchema = z.object({
   email: z.email("Please enter a valid email address").trim(),
@@ -7,7 +7,8 @@ export const LoginSchema = z.object({
   password: z
     .string()
     .trim()
-    .min(6, { message: "Password must be at least 6 characters long" }),
+    .min(6, { message: "Password must be at least 6 characters long" })
+    .regex(patterns.passwordRegex),
 });
 
 export const RegisterSchema = z

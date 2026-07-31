@@ -15,5 +15,9 @@ export const patterns = {
 
   noHtmlTags: /^(?!.*<[^>]+>).*$/,
 
+  onlyNumber: /^[0-9]+$/,
+
+  categoryName: /^[a-zA-Z0-9_\u0600-\u06FF\s]+$/,
+
   passwordRegex: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&#]{8,}$/,
 };

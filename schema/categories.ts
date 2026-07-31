@@ -1,5 +1,6 @@
 import { transactionTypeEnum } from "@/db/schema";
 import * as z from "zod";
+import { patterns } from "./patterns";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
@@ -8,12 +9,15 @@ const ACCEPTED_IMAGE_TYPES = [
   "image/jpg",
   "image/png",
   "image/webp",
-];
+] as const;
 
 export const imageMetaSchema = z.object({
-  fileName: z.string().min(1),
+  fileName: z.string().trim().min(1).max(255),
   fileType: z.enum(ACCEPTED_IMAGE_TYPES),
-  fileSize: z.number().max(MAX_FILE_SIZE, { error: "Max size allowed is 5MB" }),
+  fileSize: z
+    .number()
+    .positive()
+    .max(MAX_FILE_SIZE, { error: "Max size allowed is 5MB" }),
 });
 
 export const createCategorySchema = z.object({
@@ -23,11 +27,12 @@ export const createCategorySchema = z.object({
   parentId: z.uuid().nullable().optional(),
   name: z
     .string()
+    .trim()
     .min(1, "Please enter a name")
     .max(32, { error: "Too many characters" })
-    .trim(),
+    .regex(patterns.categoryName),
 
-  iconKey: z.string().optional(), //Only key/url not a File
+  iconKey: z.string().trim().optional(), //Only key/url not a File
 });
 
 export const createSubCategorySchema = z.object({
@@ -37,13 +42,14 @@ export const createSubCategorySchema = z.object({
   parentId: z.uuid({ error: "Select A Parent Category" }).trim(),
   name: z
     .string()
+    .trim()
     .min(1, "Please enter a name")
     .max(32, { error: "Too many characters" })
-    .trim(),
+    .regex(patterns.categoryName),
 
   icon: z.any().optional(),
 });
 
 export type CreateCategoryType = z.input<typeof createCategorySchema>;
-export type createSubCategoryType = z.input<typeof createSubCategorySchema>;
+export type CreateSubCategoryType = z.input<typeof createSubCategorySchema>;
 // TODO Figure out what todo with dept id
