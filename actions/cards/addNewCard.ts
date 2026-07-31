@@ -5,10 +5,10 @@ import { db } from "@/db";
 import { eq } from "drizzle-orm";
 import { ActivityLog, cards } from "@/db/schema";
 import { updateTag } from "next/cache";
-import { withAction } from "@/lib/errors/error-handler";
+import { createAction } from "@/lib/errors/error-handler";
 import { AppError } from "@/lib/errors/AppError";
 
-export const addNewCard = withAction(async (values: NewCardSchemaType) => {
+export const addNewCard = createAction(async (values: NewCardSchemaType) => {
   console.log("ADD NEW CARD START");
   const session = await getSession();
 

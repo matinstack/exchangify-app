@@ -34,7 +34,7 @@ import { toast } from "sonner";
 import { addNewCard } from "@/actions/cards/addNewCard";
 import FormSubmitButton from "@/components/shared/FormSubmitButton";
 import { useRouter } from "next/navigation";
-import { runAction } from "@/lib/errors/runAction";
+import { handleAction } from "@/lib/errors/runAction";
 const bankTypeItems = [
   { label: "Iranian Bank", value: "iranianBank" },
   { label: "Visa", value: "visa" },
@@ -96,7 +96,7 @@ const AddNewCardForm = () => {
   });
 
   const onSubmit = async (values: NewCardSchemaType) => {
-    const res = await runAction(addNewCard(values));
+    const res = await handleAction(addNewCard(values));
 
     if (!res.success) return;
     console.log(res);

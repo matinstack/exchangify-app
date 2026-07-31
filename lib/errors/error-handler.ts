@@ -56,7 +56,7 @@ export const actionErrorHandler = (error: unknown): ActionResponse<never> => {
   };
 };
 
-export function withAction<T, Args extends unknown[]>(
+export function createAction<T, Args extends unknown[]>(
   action: (...args: Args) => Promise<T>,
 ): (...args: Args) => Promise<ActionResponse<T>> {
   return async (...args: Args) => {

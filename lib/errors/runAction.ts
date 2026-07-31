@@ -1,7 +1,7 @@
 import { toast } from "sonner";
 import { ActionResponse } from "./error-handler";
 
-export async function runAction<T>(
+export async function handleAction<T>(
   action: Promise<ActionResponse<T>>,
 ): Promise<ActionResponse<T>> {
   try {
