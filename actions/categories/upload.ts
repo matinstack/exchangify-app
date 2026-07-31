@@ -4,10 +4,11 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { imageMetaSchema } from "@/schema/categories";
 import { getSession } from "@/lib/auth-helpers";
+import { AppError } from "@/lib/errors/AppError";
 
 export async function getCategoryIconUploudUrl(meta: unknown) {
   const session = await getSession();
-  if (!session?.user.id) throw new Error("Unauthorized");
+  if (!session?.user.id) throw new AppError("UNAUTHORIZED");
 
   const parsed = imageMetaSchema.safeParse(meta);
   if (!parsed.success) throw new Error("Unauthorized");

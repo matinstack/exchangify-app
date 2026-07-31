@@ -7,24 +7,17 @@ import { getSession } from "@/lib/auth-helpers";
 import { db } from "@/db";
 import { categories } from "@/db/schema";
 import { and, eq, ilike, or } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { createAction } from "@/lib/errors/error-handler";
+import { AppError } from "@/lib/errors/AppError";
 
-export const createCategory = async (values: CreateCategoryType) => {
-  const session = await getSession();
-  if (!session || !session.user.id) {
-    throw new Error("Unauthorized");
-  }
-  const { id } = session.user;
+export const createCategory = createAction(
+  async (values: CreateCategoryType) => {
+    const session = await getSession();
 
-  const validatedFields = createCategorySchema.safeParse(values);
+    const { id } = session.user;
 
-  if (!validatedFields.success) {
-    return { error: "Invalid Fields" };
-  }
-
-  const { name, parentId, categoryType, iconKey } = validatedFields.data;
-
-  try {
+    const { name, parentId, categoryType, iconKey } =
+      createCategorySchema.parse(values);
     const [category] = await db
       .select()
       .from(categories)
@@ -37,16 +30,8 @@ export const createCategory = async (values: CreateCategoryType) => {
       .limit(1);
 
     if (category) {
-      return {
-        error: "You have a category with same name",
-      };
+      throw new AppError("CATEGORY_ALREADY_EXISTS");
     }
-
-    // let imageUrl = "";
-    // if (iconKey) {
-    //   // ُTODO upload image to bucket
-    //   imageUrl = "https://example.com/path-to-image.png";
-    // }
 
     await db.insert(categories).values({
       userId: id,
@@ -57,18 +42,8 @@ export const createCategory = async (values: CreateCategoryType) => {
       type: categoryType,
     });
 
-    revalidatePath("/app");
     return {
-      success: "Category successfully added",
+      message: "Category successfully added",
     };
-  } catch (err) {
-    console.error(err);
-
-    return {
-      error:
-        err instanceof Error
-          ? `Database Error ${err.message}`
-          : "An Unexpected database error occurred.",
-    };
-  }
-};
+  },
+);
