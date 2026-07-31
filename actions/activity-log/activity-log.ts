@@ -2,7 +2,7 @@
 import { DateFilter } from "@/actions/transactions/transactions";
 import { getSession } from "@/lib/auth-helpers";
 import { and, between, count, eq } from "drizzle-orm";
-import { ActivityLog, transactions } from "@/db/schema";
+import { ActivityLog } from "@/db/schema";
 import {
   startOfDay,
   endOfDay,
@@ -13,6 +13,7 @@ import {
 } from "date-fns";
 import { db } from "@/db";
 import { cacheLife, cacheTag } from "next/cache";
+import { AppError } from "@/lib/errors/AppError";
 
 export type ActivityQuery = {
   page?: string;
@@ -28,8 +29,8 @@ async function getActivitiesCached(userId: string, query: ActivityQuery) {
 
   const { page, limit, dateFilter } = query;
 
-  const currentPage = Number(page) ?? 1;
-  const pageSize = Number(limit) ?? 10;
+  const currentPage = Number(page) || 1;
+  const pageSize = Number(limit) || 10;
 
   const offset = (currentPage - 1) * pageSize;
   const conditions = [eq(ActivityLog.userId, userId)];
@@ -88,14 +89,14 @@ async function getActivitiesCached(userId: string, query: ActivityQuery) {
     };
   } catch (err) {
     console.error(err);
-    throw err;
+    throw new AppError("INTERNAL_ERROR");
   }
 }
 
 export const getActivities = async (query: ActivityQuery) => {
   const session = await getSession();
   if (!session || !session.user.id) {
-    throw new Error("Unauthorized! Please login again.");
+    throw new AppError("UNAUTHORIZED");
   }
 
   return getActivitiesCached(session.user.id, query);
