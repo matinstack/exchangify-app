@@ -1,3 +1,4 @@
+import { isDeltaZero } from "framer-motion";
 import { user } from "./auth-schema";
 import {
   pgTable,
@@ -5,6 +6,7 @@ import {
   text,
   numeric,
   timestamp,
+  boolean,
   pgEnum,
 } from "drizzle-orm/pg-core";
 
@@ -37,6 +39,7 @@ export const cards = pgTable("cards", {
   cardColor: text("card_color").notNull(),
   currency: currencyEnum("currency").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
+  isDefault: boolean("is_default").notNull().default(false),
   updatedAt: timestamp("updated_at").$onUpdate(() => new Date()),
 });
 
