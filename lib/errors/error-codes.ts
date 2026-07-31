@@ -63,7 +63,22 @@ const BUSINESS_ERRORS = {
     message: "You Have Same Card With This Card Number",
     status: 400,
   },
+  TRANSACTION_NOT_FOUND: {
+    code: "TRA_ERR_001",
+    message: "Transaction not found",
+    status: 404,
+  },
 
+  CATEGORY_ALREADY_EXISTS: {
+    code: "CAT_ERR_001",
+    message: "You Have Same Category With This Name",
+    status: 400,
+  },
+  CATEGORY_NOT_FOUND: {
+    code: "CAT_ERR_002",
+    message: "Category not found",
+    status: 400,
+  },
   CARD_NOT_FOUND: {
     code: "CARD_ERR_002",
     message: "Card Not Found.",
