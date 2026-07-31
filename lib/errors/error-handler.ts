@@ -1,6 +1,7 @@
 import { z, ZodError } from "zod";
 import { AppError } from "./AppError";
 import { ERROR_CODES } from "./error-codes";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 export type FieldErrors = Record<string, string[]>;
 
@@ -17,6 +18,10 @@ export type ActionResponse<T = unknown> =
     };
 
 export const actionErrorHandler = (error: unknown): ActionResponse<never> => {
+  if (isRedirectError(error)) {
+    throw error;
+  }
+
   console.log("[SERVER_ACTION_ERROR]:", error);
 
   if (error instanceof ZodError) {
