@@ -20,7 +20,7 @@ export const transactions = pgTable("transactions", {
   userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
   cardId: uuid("card_id")
     .notNull()
-    .references(() => cards.id, { onDelete: "cascade" }),
+    .references(() => cards.id, { onDelete: "set null" }),
   amount: numeric("amount", { scale: 2, precision: 14 }).notNull(),
   transactionType: transactionTypeEnum("transaction_type").notNull(),
   categoryId: uuid("category_id")
