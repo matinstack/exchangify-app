@@ -4,6 +4,8 @@ export const CARD_THEMES = {
     text: "text-white",
     subText: "text-indigo-200/70 dark:text-purple-300/60",
     chip: "bg-white/15 dark:bg-purple-500/20 border-white/10 dark:border-purple-400/20",
+    button:
+      "bg-white/15 dark:bg-purple-500/20 border-white/10 dark:border-purple-400/20 hover:bg-white/25 dark:hover:bg-purple-500/30 focus-visible:bg-white/25 dark:focus-visible:bg-purple-500/30 focus-visible:ring-2 focus-visible:ring-white/20 dark:focus-visible:ring-purple-400/30",
     label: "Purple",
   },
 
@@ -12,6 +14,8 @@ export const CARD_THEMES = {
     text: "text-zinc-50",
     subText: "text-emerald-200/60 dark:text-emerald-400/50",
     chip: "bg-white/10 dark:bg-emerald-500/20 border-white/10 dark:border-emerald-500/20",
+    button:
+      "bg-white/10 dark:bg-emerald-500/20 border-white/10 dark:border-emerald-500/20 hover:bg-white/20 dark:hover:bg-emerald-500/30 focus-visible:bg-white/20 dark:focus-visible:bg-emerald-500/30 focus-visible:ring-2 focus-visible:ring-white/20 dark:focus-visible:ring-emerald-400/30",
     label: "Emerald",
   },
 
@@ -20,6 +24,8 @@ export const CARD_THEMES = {
     text: "text-white",
     subText: "text-rose-100/70 dark:text-rose-300/60",
     chip: "bg-white/15 dark:bg-rose-500/20 border-white/10 dark:border-rose-500/20",
+    button:
+      "bg-white/15 dark:bg-rose-500/20 border-white/10 dark:border-rose-500/20 hover:bg-white/25 dark:hover:bg-rose-500/30 focus-visible:bg-white/25 dark:focus-visible:bg-rose-500/30 focus-visible:ring-2 focus-visible:ring-white/20 dark:focus-visible:ring-rose-400/30",
     label: "Rose",
   },
 
@@ -28,6 +34,8 @@ export const CARD_THEMES = {
     text: "text-white",
     subText: "text-blue-100/70 dark:text-cyan-300/60",
     chip: "bg-white/15 dark:bg-blue-500/20 border-white/10 dark:border-blue-500/20",
+    button:
+      "bg-white/15 dark:bg-blue-500/20 border-white/10 dark:border-blue-500/20 hover:bg-white/25 dark:hover:bg-blue-500/30 focus-visible:bg-white/25 dark:focus-visible:bg-blue-500/30 focus-visible:ring-2 focus-visible:ring-white/20 dark:focus-visible:ring-blue-400/30",
     label: "Ocean Blue",
   },
 
@@ -36,6 +44,8 @@ export const CARD_THEMES = {
     text: "text-zinc-100",
     subText: "text-zinc-400/80",
     chip: "bg-zinc-700/50 dark:bg-zinc-800/60 border-zinc-600 dark:border-zinc-700",
+    button:
+      "bg-zinc-700/50 dark:bg-zinc-800/60 border-zinc-600 dark:border-zinc-700 hover:bg-zinc-600/60 dark:hover:bg-zinc-700/70 focus-visible:bg-zinc-600/60 dark:focus-visible:bg-zinc-700/70 focus-visible:ring-2 focus-visible:ring-zinc-400/20",
     label: "Carbon",
   },
 
@@ -44,6 +54,8 @@ export const CARD_THEMES = {
     text: "text-amber-50",
     subText: "text-amber-200/60 dark:text-amber-400/50",
     chip: "bg-white/10 dark:bg-amber-500/10 border-white/10 dark:border-amber-600/20",
+    button:
+      "bg-white/10 dark:bg-amber-500/10 border-white/10 dark:border-amber-600/20 hover:bg-white/20 dark:hover:bg-amber-500/20 focus-visible:bg-white/20 dark:focus-visible:bg-amber-500/20 focus-visible:ring-2 focus-visible:ring-white/20 dark:focus-visible:ring-amber-400/30",
     label: "Gold",
   },
 } as const;
