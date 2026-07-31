@@ -21,7 +21,7 @@ export const uploadWithProgress = (
         reject(new Error("Upload failed"));
       }
     };
-    xhr.onerror = () => reject(new Error("Server connectiong error"));
+    xhr.onerror = () => reject(new Error("Server connection error"));
 
     xhr.send(file);
   });

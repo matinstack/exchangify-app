@@ -63,6 +63,7 @@ const BUSINESS_ERRORS = {
     message: "You Have Same Card With This Card Number",
     status: 400,
   },
+
   CARD_NOT_FOUND: {
     code: "CARD_ERR_002",
     message: "Card Not Found.",
