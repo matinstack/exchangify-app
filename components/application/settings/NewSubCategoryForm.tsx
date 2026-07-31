@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createCategory } from "@/actions/categories/categories";
 import {
   createSubCategorySchema,
-  type createSubCategoryType,
+  type CreateSubCategoryType,
 } from "@/schema/categories";
 import {
   Field,
@@ -39,12 +39,12 @@ const NewSubCategoryForm = ({ categories }: Props) => {
     reset,
     setValue,
     formState: { errors, isSubmitting },
-  } = useForm<createSubCategoryType>({
+  } = useForm<CreateSubCategoryType>({
     resolver: zodResolver(createSubCategorySchema),
     defaultValues: {
       name: "",
       icon: undefined,
-      categoryType: "" as unknown as createSubCategoryType["categoryType"],
+      categoryType: "" as unknown as CreateSubCategoryType["categoryType"],
       parentId: undefined,
     },
   });
@@ -57,7 +57,7 @@ const NewSubCategoryForm = ({ categories }: Props) => {
     (category) => category.type === categoryType,
   );
 
-  const onSubmit = async (values: createSubCategoryType) => {
+  const onSubmit = async (values: CreateSubCategoryType) => {
     console.log(values);
     const res = await createCategory(values);
 
