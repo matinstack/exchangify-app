@@ -4,6 +4,7 @@ import TopCategoryChart from "@/components/application/dashboard/charts/TopCateg
 import RecentExpensesTable from "@/components/application/dashboard/tables/RecentExpensesTable";
 import BillsTable from "@/components/application/dashboard/tables/BIllsTable";
 import { Suspense } from "react";
+import RecentExpensesTableSkleton from "./tables/RecentExpensesTableSkleton";
 
 const Dashboard = () => {
   return (
@@ -15,7 +16,7 @@ const Dashboard = () => {
       </div>
       <div className="flex flex-col xl:flex-row gap-7">
         <div className="xl:w-2/3">
-          <Suspense fallback={<p>Loading ...</p>}>
+          <Suspense fallback={<RecentExpensesTableSkleton />}>
             <RecentExpensesTable />
           </Suspense>
         </div>
