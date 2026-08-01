@@ -17,6 +17,7 @@ import CardNumber from "@/components/application/transactions/CardNumber";
 import { format } from "date-fns";
 import TransactionDropDownParent from "@/components/application/transactions/TransactionDropDownParent";
 import { TransactionItem } from "@/components/application/transactions/Transactions";
+import ExpenseTypeIcon from "@/components/shared/expense-type-icon";
 
 type Props = {
   data: TransactionItem[];
@@ -46,15 +47,7 @@ const TransactionsTable = ({ data }: Props) => {
                   <TableCell>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <div
-                          className={`${isExpense ? "bg-expense/5" : "bg-income/5"} w-9 h-9 flex justify-center items-center rounded-full border border-border`}
-                        >
-                          {isExpense ? (
-                            <MoveDownLeft className="text-expense" size={18} />
-                          ) : (
-                            <MoveUpRight className="text-income" size={18} />
-                          )}
-                        </div>
+                        <ExpenseTypeIcon isExpense={isExpense} />
                       </TooltipTrigger>
                       <TooltipContent>
                         {item.type &&
