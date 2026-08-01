@@ -5,6 +5,8 @@ import NewSubCategoryDialog from "@/components/application/settings/NewSubCatego
 import SignOutButton from "@/components/application/settings/SignOutButton";
 import NewSubCategoryDialogSkeleton from "@/components/application/settings/NewSubCategoryDialogSkeleton";
 import { SettingWrapper } from "./SettingWrapper";
+import { Button } from "@/components/ui/button";
+import { SignOutDialog } from "./SignOutDialog";
 export const Settings = () => {
   return (
     <div className="flex flex-col gap-14 justify-center items-center py-8">
@@ -33,7 +35,9 @@ export const Settings = () => {
         title="Sign Out"
         subTitle="Sign out securely from your account on this device."
       >
-        <SignOutButton />
+        <SignOutDialog
+          trigger={<Button variant="destructive">Sign Out</Button>}
+        />
       </SettingWrapper>
     </div>
   );
