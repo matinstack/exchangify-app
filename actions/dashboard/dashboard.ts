@@ -2,9 +2,36 @@
 
 import { getSession } from "@/lib/auth-helpers";
 import { db } from "@/db";
-import { categories, transactions } from "@/db/schema";
+import { cards, categories, transactions } from "@/db/schema";
 import { and, eq, sum, sql, asc, or } from "drizzle-orm";
 import { createAction } from "@/lib/errors/error-handler";
+
+export const getDashboardCardsData = createAction(async () => {
+  const session = await getSession();
+  const id = session.user.id;
+
+  const [expenses, cardBalance] = await Promise.all([
+    db
+      .select({
+        thisMonthExpenses: sql<number>`COALESCE(SUM(CASE WHEN date_trunc('month', ${transactions.createdAt}) = date_trunc('month', now()) AND ${transactions.transactionType} = 'expense' THEN ${transactions.amount} ELSE 0 END), 0)`,
+        thisMonthIncomes: sql<number>`COALESCE(SUM(CASE WHEN date_trunc('month', ${transactions.createdAt}) = date_trunc('month', now()) AND ${transactions.transactionType} = 'income' THEN ${transactions.amount} ELSE 0 END), 0)`,
+        lastMonthExpenses: sql<number>`COALESCE(SUM(CASE WHEN date_trunc('month', ${transactions.createdAt}) = date_trunc('month', now() - interval '1 month') AND ${transactions.transactionType} = 'expense' THEN ${transactions.amount} ELSE 0 END), 0)`,
+        lastMonthIncomes: sql<number>`COALESCE(SUM(CASE WHEN date_trunc('month', ${transactions.createdAt}) = date_trunc('month', now() - interval '1 month') AND ${transactions.transactionType} = 'income' THEN ${transactions.amount} ELSE 0 END), 0)`,
+      })
+      .from(transactions)
+      .where(and(eq(transactions.userId, id))),
+
+    db
+      .select({ accountBalance: sum(cards.balance) })
+      .from(cards)
+      .where(and(eq(cards.userId, id))),
+  ]);
+
+  return {
+    expenses,
+    cardBalance,
+  };
+});
 
 export const getMonthlyReportDataChart = async () => {
   const session = await getSession();
