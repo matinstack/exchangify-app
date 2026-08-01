@@ -3,7 +3,8 @@
 import { getSession } from "@/lib/auth-helpers";
 import { db } from "@/db";
 import { categories, transactions } from "@/db/schema";
-import { and, eq, sum, sql } from "drizzle-orm";
+import { and, eq, sum, sql, asc, or } from "drizzle-orm";
+import { createAction } from "@/lib/errors/error-handler";
 
 export const getMonthlyReportDataChart = async () => {
   const session = await getSession();
@@ -77,3 +78,32 @@ export const getTopCategoryChartData = async () => {
     throw err;
   }
 };
+
+export const getRecentTransactionsData = createAction(async () => {
+  const session = await getSession();
+  const id = session.user.id;
+
+  const [transactionsData, categoriesData] = await Promise.all([
+    db
+      .select()
+      .from(transactions)
+      .where(and(eq(transactions.userId, id)))
+      .orderBy(asc(transactions.date))
+      .limit(5),
+
+    db
+      .select({
+        id: categories.id,
+        parentId: categories.parentId,
+        name: categories.name,
+        type: categories.type,
+      })
+      .from(categories)
+      .where(or(eq(categories.userId, id), eq(categories.isDefault, true))),
+  ]);
+
+  return {
+    transactionsData,
+    categoriesData,
+  };
+});
