@@ -5,6 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { CardsData } from "../Cards";
 type Card = {
   type: "regularCard";
   hasProfit: boolean;

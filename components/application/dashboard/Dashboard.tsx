@@ -9,7 +9,9 @@ import RecentExpensesTableSkleton from "./tables/RecentExpensesTableSkleton";
 const Dashboard = () => {
   return (
     <div className="flex flex-col gap-7 my-7">
-      <Cards />
+      <Suspense fallback={<p>Loading ...</p>}>
+        <Cards />
+      </Suspense>
       <div className={"grid xl:grid-cols-2 md:grid-cols-1 gap-7"}>
         <ExpenseChart />
         <TopCategoryChart />
