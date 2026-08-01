@@ -65,13 +65,11 @@ const DashboardSkeleton = () => {
       </div>
 
       <div className={"grid xl:grid-cols-2 md:grid-cols-1 gap-7"}>
-        <ExpenseChart />
-        <TopCategoryChart />
+        {/* <ExpenseChart /> */}
+        {/* <TopCategoryChart /> */}
       </div>
       <div className={"grid xl:grid-cols-6 w-full gap-7"}>
-        <div className={"xl:col-span-4"}>
-          <RecentExpensesTable />
-        </div>
+        <div className={"xl:col-span-4"}>{/* <RecentExpensesTable /> */}</div>
         <div className={"xl:col-span-2"}>
           <BillsTable />
         </div>
