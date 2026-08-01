@@ -39,3 +39,5 @@ export const categories = pgTable(
     };
   },
 );
+
+export type Categories = typeof categories.$inferSelect;

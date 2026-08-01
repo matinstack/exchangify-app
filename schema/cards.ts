@@ -15,15 +15,13 @@ export const NewCardSchema = z.object({
     .trim()
     .min(3, { message: "Bank name is required" })
     .max(24, { message: "Bank name is too long!" })
-    .regex(patterns.username)
     .optional(),
 
   balance: z
     .string()
     .trim()
     .min(1, { error: "Bank balance is empty!" })
-    .max(14, { error: "Too much for balance!" })
-    .regex(patterns.onlyNumber),
+    .max(14, { error: "Too much for balance!" }),
 
   cardNumber: z
     .string()
@@ -47,8 +45,7 @@ export const NewCardSchema = z.object({
     .trim()
     .min(1, { error: "Please pick a color" })
     .max(24, { error: "Invalid Input" })
-    .regex(patterns.noHtmlTags)
-    .regex(patterns.personName),
+    .regex(patterns.noHtmlTags),
 });
 
 export type NewCardSchemaType = z.infer<typeof NewCardSchema>;

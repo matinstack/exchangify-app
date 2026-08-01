@@ -8,5 +8,5 @@ export const getCardsById = async (id: string) => {
   cacheLife("days");
   cacheTag(`cards:${id}`);
 
-  return db.select().from(cards).where(eq(cards.userId, id));
+  return await db.select().from(cards).where(eq(cards.userId, id));
 };
