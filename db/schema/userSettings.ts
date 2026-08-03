@@ -10,7 +10,7 @@ export const userSettings = pgTable("user_settings", {
   userId: text("user_id")
     .references(() => user.id, { onDelete: "cascade" })
     .notNull(),
-  currency: currencyEnum("currency"),
+  currency: currencyEnum("currency").default("USD").notNull(),
   language: languageEnum("language").$default(() => "en"),
   timezone: text("timezone").notNull().default("Asia/Tehran"),
   theme: text("theme"),

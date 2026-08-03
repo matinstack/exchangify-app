@@ -1,19 +1,22 @@
-export type CardType = "visa" | "masterCard" | "iranianBank" | "cashWallet";
+export type Currency = "USD" | "EUR" | "IRR";
 
-export const formatCurrency = (amount: number, cardType: CardType) => {
+export const formatCurrency = (amount: number, cardType: Currency) => {
+  console.log(amount, cardType);
   switch (cardType) {
-    case "visa":
-    case "masterCard":
+    case "EUR":
       return new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "EUR",
       }).format(amount);
 
-    case "iranianBank":
-      return new Intl.NumberFormat("fa-IR").format(amount) + "Rial";
-
-    case "cashWallet":
+    case "IRR":
       return new Intl.NumberFormat("fa-IR").format(amount);
+
+    case "USD":
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+      }).format(amount);
 
     default:
       return amount.toString();

@@ -6,6 +6,10 @@ export type TransactionItem = {
   id: string;
   cardId: string;
   amount: string;
+  usdAmount: string;
+  euroAmount: string;
+  rialAmount: string;
+  cardCurrency: "USD" | "EUR" | "IRR";
   note: string | null;
   type: "expense" | "income";
   bankName: string | null;

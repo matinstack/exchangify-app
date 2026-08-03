@@ -18,6 +18,7 @@ import { format } from "date-fns";
 import TransactionDropDownParent from "@/components/application/transactions/TransactionDropDownParent";
 import { TransactionItem } from "@/components/application/transactions/Transactions";
 import ExpenseTypeIcon from "@/components/shared/expense-type-icon";
+import { formatCurrency } from "@/lib/format-currency";
 
 type Props = {
   data: TransactionItem[];
@@ -42,6 +43,13 @@ const TransactionsTable = ({ data }: Props) => {
       <TableBody>
         {data.length > 0
           ? data.map((item) => {
+              console.log(item.cardCurrency);
+              const amount =
+                item.cardCurrency === "USD"
+                  ? item.usdAmount
+                  : item.cardCurrency === "EUR"
+                    ? item.euroAmount
+                    : item.rialAmount;
               const isExpense = item.type === "expense";
               return (
                 <TableRow key={item.id}>
@@ -68,9 +76,7 @@ const TransactionsTable = ({ data }: Props) => {
                     className={`font-semibold ${!isExpense && "text-income"}`}
                   >
                     {isExpense ? "-" : "+"}{" "}
-                    {new Intl.NumberFormat("en-US").format(
-                      Math.trunc(Number(item.amount)),
-                    )}
+                    {formatCurrency(Number(amount), item.cardCurrency)}
                   </TableCell>
                   <TableCell>
                     <p>{item.bankName}</p>
