@@ -1,5 +1,6 @@
 import { getDashboardCardsData } from "@/actions/dashboard/dashboard";
 import CardsWrapper from "@/components/application/dashboard/cards/CardsWrapper";
+import { formatCurrency } from "@/lib/format-currency";
 import {
   WalletMinimal,
   TrendingUpIcon,
@@ -10,30 +11,25 @@ import {
 
 export type CardsData = {
   balance: string;
-  income: {
-    thisMonth: string;
-    lastMonth: string;
-  };
-  expense: {
-    thisMonth: string;
-    lastMonth: string;
-  };
+  thisMonthIncomes: string;
+  lastMonthIncomes: string;
+  thisMonthExpenses: string;
+  lastMonthExpenses: string;
+  defaultCurrency: string;
 };
 
 async function Cards() {
   const data = await getDashboardCardsData();
   if (!data.success) return;
   const cardsData = {
-    balance: data.data.cardBalance?.at(0)?.accountBalance,
-    income: {
-      thisMonth: data.data.expenses.at(0)?.thisMonthIncomes,
-      lastMonth: data.data.expenses.at(0)?.lastMonthIncomes,
-    },
-    expense: {
-      thisMonth: data.data.expenses.at(0)?.thisMonthExpenses,
-      lastMonth: data.data.expenses.at(0)?.lastMonthExpenses,
-    },
+    balance: data.data.cardBalance,
+    thisMonthIncomes: data.data.expenses.thisMonthIncomes,
+    lastMonthIncomes: data.data.expenses.lastMonthIncomes,
+    thisMonthExpenses: data.data.expenses.thisMonthExpenses,
+    lastMonthExpenses: data.data.expenses.lastMonthExpenses,
+    defaultCurrency: data.data.defaultCurrency,
   };
+  console.log(formatCurrency(cardsData.balance, cardsData.defaultCurrency));
   return (
     <ul className={"grid 2xl:grid-cols-4 md:grid-cols-2 gap-7 "}>
       <CardsWrapper
@@ -42,7 +38,7 @@ async function Cards() {
         footerIcon={<TrendingUpIcon />}
         icon={<WalletMinimal />}
         header={"Account Balance"}
-        amount={Number(cardsData.balance)}
+        amount={formatCurrency(cardsData.balance, cardsData.defaultCurrency)}
         hasProfit
       />
       <CardsWrapper
@@ -51,7 +47,10 @@ async function Cards() {
         footerIcon={<TrendingUpIcon />}
         icon={<HandCoins />}
         header={"Monthly Expenses"}
-        amount={Number(cardsData.expense.thisMonth)}
+        amount={formatCurrency(
+          cardsData.thisMonthExpenses,
+          cardsData.defaultCurrency,
+        )}
         hasProfit
       />
       <CardsWrapper
@@ -60,7 +59,10 @@ async function Cards() {
         footerIcon={<TrendingDownIcon />}
         icon={<BanknoteArrowUp />}
         header={"Monthly Incomes"}
-        amount={Number(cardsData.income.thisMonth)}
+        amount={formatCurrency(
+          cardsData.thisMonthIncomes,
+          cardsData.defaultCurrency,
+        )}
         hasProfit={false}
       />
       <CardsWrapper
@@ -69,7 +71,7 @@ async function Cards() {
         footerIcon={<TrendingUpIcon />}
         icon={<WalletMinimal />}
         header={"Account Balance"}
-        amount={973652.23}
+        amount={"2"}
         hasProfit
       />
     </ul>

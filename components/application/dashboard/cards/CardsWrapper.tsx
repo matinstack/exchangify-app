@@ -11,7 +11,7 @@ type Card = {
   hasProfit: boolean;
   icon: React.ReactNode;
   header: string;
-  amount: number;
+  amount: string;
   footer: string;
   footerIcon: React.ReactNode;
 };

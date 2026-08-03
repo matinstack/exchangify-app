@@ -250,8 +250,8 @@ export const handleTransaction = createAction(
         let euroAmount;
         const euroRatio = todayCur[0].euroRatio;
         const usdRatio = todayCur[0].usdRatio;
-        const euroUsdRatio = todayCur[0].usdRatio;
-        const usdEuroRatio = todayCur[0].usdRatio;
+        const euroUsdRatio = todayCur[0].euroUsdRatio;
+        const usdEuroRatio = todayCur[0].usdEuroRatio;
 
         if (card[0].cardCurrency === "EUR") {
           rialAmount = String(+amount * +euroRatio);
@@ -276,7 +276,6 @@ export const handleTransaction = createAction(
             euroAmount,
             usdAmount,
             euroRatio,
-
             usdRatio,
             euroUsdRatio,
             usdEuroRatio,
