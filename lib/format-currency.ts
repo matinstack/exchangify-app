@@ -10,7 +10,7 @@ export const formatCurrency = (amount: number, cardType: CardType) => {
       }).format(amount);
 
     case "iranianBank":
-      return new Intl.NumberFormat("fa-IR").format(amount) + " ریال";
+      return new Intl.NumberFormat("fa-IR").format(amount) + "Rial";
 
     case "cashWallet":
       return new Intl.NumberFormat("fa-IR").format(amount);

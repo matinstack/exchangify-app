@@ -20,9 +20,6 @@ export const currencyEnum = pgEnum("currency", [
   "IRR", // ریال ایران
   "EUR", // یورو
   "USD", // دلار آمریکا
-  "GBP", // پوند
-  "AED", // درهم امارات
-  "TRY", // لیر ترکیه
 ]);
 export const cards = pgTable("cards", {
   id: uuid("id").primaryKey().defaultRandom(),

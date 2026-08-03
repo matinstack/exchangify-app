@@ -24,6 +24,7 @@ type Props = {
 };
 
 const TransactionsTable = ({ data }: Props) => {
+  console.log(data);
   return (
     <Table>
       <TableCaption>A list of your recent invoices.</TableCaption>

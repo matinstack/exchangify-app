@@ -17,7 +17,9 @@ export const deleteTransactionById = createAction(
       const transaction = await tx
         .select({
           id: transactions.id,
-          amount: transactions.amount,
+          rialAmount: transactions.rialAmount,
+          usdAmount: transactions.usdAmount,
+          euroAmount: transactions.euroAmount,
           transactionType: transactions.transactionType,
           cardId: transactions.cardId,
         })
@@ -34,11 +36,13 @@ export const deleteTransactionById = createAction(
         throw new AppError("TRANSACTION_NOT_FOUND");
       }
 
-      const { amount, transactionType, cardId } = transaction[0];
+      const { euroAmount, rialAmount, usdAmount, transactionType, cardId } =
+        transaction[0];
 
       const card = await tx
         .select({
           balance: cards.balance,
+          cardCurrency: cards.currency,
         })
         .from(cards)
         .where(and(eq(cards.id, cardId), eq(cards.userId, userId)))
@@ -48,6 +52,10 @@ export const deleteTransactionById = createAction(
       if (card.length === 0) {
         throw new AppError("CARD_NOT_FOUND");
       }
+      let amount;
+      if (card[0]?.cardCurrency === "USD") amount = usdAmount;
+      if (card[0]?.cardCurrency === "EUR") amount = euroAmount;
+      if (card[0]?.cardCurrency === "IRR") amount = rialAmount;
 
       // برگردوندن اثر تراکنش: اگه income بود، حذفش یعنی بالانس کم می‌شه؛
       // اگه بالانس بعد از کم‌کردن منفی می‌شه، اجازه‌ی حذف نده

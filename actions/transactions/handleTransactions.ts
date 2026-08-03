@@ -2,6 +2,7 @@
 
 import { db } from "@/db";
 import { ActivityLog, cards, categories, transactions } from "@/db/schema";
+import { todayCurrency } from "@/db/schema/todayCurrency";
 import { getSession } from "@/lib/auth-helpers";
 import { AppError } from "@/lib/errors/AppError";
 import { createAction } from "@/lib/errors/error-handler";
@@ -31,6 +32,12 @@ export const handleTransaction = createAction(
       note,
     } = NewTransactionSchema.parse(values);
 
+    const [cardCurrency] = await db
+      .select({ currency: cards.currency })
+      .from(cards)
+      .where(and(eq(cards.userId, id), eq(cards.id, cardId)))
+      .limit(1);
+
     await db.transaction(async (tx) => {
       const category = await tx
         .select({ id: categories.id })
@@ -56,9 +63,15 @@ export const handleTransaction = createAction(
 
         const [previousTransaction] = await tx
           .select({
-            previousAmount: transactions.amount,
+            previousRialAmount: transactions.rialAmount,
+            previousUsdAmount: transactions.usdAmount,
+            previousEuroAmount: transactions.euroAmount,
             previousType: transactions.transactionType,
             previousCardId: transactions.cardId,
+            euroRatio: transactions.euroRatio,
+            usdRatio: transactions.usdRatio,
+            usdEuroRatio: transactions.usdEuroRatio,
+            euroUsdRatio: transactions.euroUsdRatio,
           })
           .from(transactions)
           .where(
@@ -72,7 +85,21 @@ export const handleTransaction = createAction(
           throw new AppError("TRANSACTION_NOT_FOUND");
         }
 
-        const oldAmount = Number(previousTransaction.previousAmount);
+        let previusAmount;
+        let currency: "USD" | "EUR" | "IRR";
+
+        if (cardCurrency.currency === "USD") {
+          previusAmount = previousTransaction.previousUsdAmount;
+          currency = "USD";
+        } else if (cardCurrency.currency === "EUR") {
+          previusAmount = previousTransaction.previousEuroAmount;
+          currency = "EUR";
+        } else {
+          previusAmount = previousTransaction.previousRialAmount;
+          currency = "IRR";
+        }
+
+        const oldAmount = Number(previusAmount);
         const newAmount = Number(amount);
         const previousType = previousTransaction.previousType;
         const previousCardId = previousTransaction.previousCardId;
@@ -118,29 +145,48 @@ export const handleTransaction = createAction(
               balance: sql`${cards.balance} + ${diffEffect}`,
             })
             .where(and(eq(cards.id, cardId), eq(cards.userId, id)));
+        }
+        //  else {
+        //   // کارت عوض شده: اثر قدیم رو از کارت قدیم برمی‌گردونیم و اثر جدید رو روی کارت جدید اعمال می‌کنیم
+        //   const oldCardProjected = Number(oldCard.balance) - oldEffect;
+        //   const newCardProjected = Number(newCard.balance) + newEffect;
+
+        //   if (oldCardProjected < 0 || newCardProjected < 0) {
+        //     throw new AppError("INSUFFICIENT_FUNDS");
+        //   }
+
+        //   await Promise.all([
+        //     tx
+        //       .update(cards)
+        //       .set({
+        //         balance: sql`${cards.balance} - ${oldEffect}`,
+        //       })
+        //       .where(and(eq(cards.id, previousCardId), eq(cards.userId, id))),
+        //     tx
+        //       .update(cards)
+        //       .set({
+        //         balance: sql`${cards.balance} + ${newEffect}`,
+        //       })
+        //       .where(and(eq(cards.id, cardId), eq(cards.userId, id))),
+        //   ]);
+        // }
+
+        let rialAmount;
+        let euroAmount;
+        let usdAmount;
+
+        if (currency === "IRR") {
+          rialAmount = amount;
+          euroAmount = String(+amount / +previousTransaction.euroRatio);
+          usdAmount = String(+amount / +previousTransaction.usdRatio);
+        } else if (currency === "EUR") {
+          rialAmount = String(+amount * +previousTransaction.euroRatio);
+          euroAmount = amount;
+          usdAmount = String(+amount * +previousTransaction.euroUsdRatio);
         } else {
-          // کارت عوض شده: اثر قدیم رو از کارت قدیم برمی‌گردونیم و اثر جدید رو روی کارت جدید اعمال می‌کنیم
-          const oldCardProjected = Number(oldCard.balance) - oldEffect;
-          const newCardProjected = Number(newCard.balance) + newEffect;
-
-          if (oldCardProjected < 0 || newCardProjected < 0) {
-            throw new AppError("INSUFFICIENT_FUNDS");
-          }
-
-          await Promise.all([
-            tx
-              .update(cards)
-              .set({
-                balance: sql`${cards.balance} - ${oldEffect}`,
-              })
-              .where(and(eq(cards.id, previousCardId), eq(cards.userId, id))),
-            tx
-              .update(cards)
-              .set({
-                balance: sql`${cards.balance} + ${newEffect}`,
-              })
-              .where(and(eq(cards.id, cardId), eq(cards.userId, id))),
-          ]);
+          rialAmount = String(+amount * +previousTransaction.usdRatio);
+          usdAmount = amount;
+          euroAmount = String(+amount * +previousTransaction.usdEuroRatio);
         }
 
         await tx
@@ -148,7 +194,9 @@ export const handleTransaction = createAction(
           .set({
             userId: id,
             cardId,
-            amount,
+            rialAmount,
+            euroAmount,
+            usdAmount,
             categoryId: subCategoryId,
             transactionType,
             note,
@@ -177,21 +225,46 @@ export const handleTransaction = createAction(
         });
       } else {
         // ----- create -----
-        const [card] = await tx
-          .select({ balance: cards.balance })
-          .from(cards)
-          .where(and(eq(cards.id, cardId), eq(cards.userId, id)))
-          .for("update");
+        const [card, todayCur] = await Promise.all([
+          tx
+            .select({ balance: cards.balance, cardCurrency: cards.currency })
+            .from(cards)
+            .where(and(eq(cards.id, cardId), eq(cards.userId, id)))
+            .for("update"),
 
-        if (!card) {
+          tx.select().from(todayCurrency),
+        ]);
+
+        if (card.length === 0) {
           throw new AppError("CARD_NOT_FOUND");
         }
 
         if (
           transactionType === "expense" &&
-          Number(card.balance) < Number(amount)
+          Number(card[0].balance) < Number(amount)
         ) {
           throw new AppError("INSUFFICIENT_FUNDS");
+        }
+        let rialAmount;
+        let usdAmount;
+        let euroAmount;
+        const euroRatio = todayCur[0].euroRatio;
+        const usdRatio = todayCur[0].usdRatio;
+        const euroUsdRatio = todayCur[0].usdRatio;
+        const usdEuroRatio = todayCur[0].usdRatio;
+
+        if (card[0].cardCurrency === "EUR") {
+          rialAmount = String(+amount * +euroRatio);
+          euroAmount = amount;
+          usdAmount = String(+amount * +euroUsdRatio);
+        } else if (card[0].cardCurrency === "USD") {
+          rialAmount = String(+amount * +usdRatio);
+          usdAmount = amount;
+          euroAmount = String(+amount * +usdEuroRatio);
+        } else {
+          rialAmount = amount;
+          euroAmount = String(+amount / +euroRatio);
+          usdAmount = String(+amount / +usdRatio);
         }
 
         const [transaction] = await tx
@@ -199,7 +272,14 @@ export const handleTransaction = createAction(
           .values({
             userId: id,
             cardId,
-            amount,
+            rialAmount,
+            euroAmount,
+            usdAmount,
+            euroRatio,
+
+            usdRatio,
+            euroUsdRatio,
+            usdEuroRatio,
             categoryId: subCategoryId,
             transactionType,
             note,

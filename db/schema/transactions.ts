@@ -6,7 +6,7 @@ import {
   timestamp,
   numeric,
 } from "drizzle-orm/pg-core";
-import { cards } from "@/db/schema/cards";
+import { cards, currencyEnum } from "@/db/schema/cards";
 import { user } from "@/db/schema/auth-schema";
 import { categories } from "@/db/schema/categories";
 
@@ -21,7 +21,13 @@ export const transactions = pgTable("transactions", {
   cardId: uuid("card_id")
     .notNull()
     .references(() => cards.id, { onDelete: "set null" }),
-  amount: numeric("amount", { scale: 2, precision: 14 }).notNull(),
+  rialAmount: numeric("rial_amount", { scale: 2, precision: 14 }).notNull(),
+  usdAmount: numeric("usd_amount", { scale: 2, precision: 14 }).notNull(),
+  euroAmount: numeric("euro_amount", { scale: 2, precision: 14 }).notNull(),
+  euroRatio: text("euro_ratio").notNull(),
+  usdRatio: text("usd_ratio").notNull(),
+  usdEuroRatio: text("usd_euro_ratio").notNull(),
+  euroUsdRatio: text("euro_usd_ratio").notNull(),
   transactionType: transactionTypeEnum("transaction_type").notNull(),
   categoryId: uuid("category_id")
     .references(() => categories.id, { onDelete: "set null" })

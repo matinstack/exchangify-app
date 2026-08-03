@@ -61,7 +61,7 @@ async function getTransactionsCached(userId: string, query: Query) {
   const { sortBy, page, limit, type, order, dateFilter } = query;
   const sortableColumns = {
     date: transactions.date,
-    amount: transactions.amount,
+    amount: transactions.usdAmount,
   };
 
   //  Dynamic Query Building
@@ -109,12 +109,15 @@ async function getTransactionsCached(userId: string, query: Query) {
         .select({
           id: transactions.id,
           cardId: transactions.cardId,
-          amount: transactions.amount,
+          usdAmount: transactions.usdAmount,
+          euroAmount: transactions.euroAmount,
+          rialAmount: transactions.rialAmount,
           type: transactions.transactionType,
           note: transactions.note,
           description: transactions.description,
           bankName: cards.bankName,
           cardNumber: cards.cardNumber,
+          cardCurrency: cards.currency,
           category: parentCategory.name,
           categoryId: parentCategory.id,
           subCategory: categories.name,
