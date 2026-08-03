@@ -5,16 +5,15 @@ import TransactionsTable from "@/components/application/transactions/Transaction
 export type TransactionItem = {
   id: string;
   cardId: string;
-  amount: string;
   usdAmount: string;
   euroAmount: string;
   rialAmount: string;
-  cardCurrency: "USD" | "EUR" | "IRR";
+  type: "income" | "expense";
   note: string | null;
-  type: "expense" | "income";
+  description: string | null;
   bankName: string | null;
   cardNumber: string | null;
-  description: string | null;
+  cardCurrency: "IRR" | "EUR" | "USD" | null;
   category: string | null;
   categoryId: string | null;
   subCategory: string | null;
