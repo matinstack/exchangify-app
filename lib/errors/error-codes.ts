@@ -1,6 +1,6 @@
-const SYSTEM_ERRORS = {
+export const SYSTEM_ERRORS = {
   INTERNAL_ERROR: {
-    code: "SYS_ERR_500",
+    code: "SYS_ERR_001",
     message: "Internal Server Error.",
     status: 500,
   },
@@ -16,7 +16,7 @@ const SYSTEM_ERRORS = {
   },
 } as const;
 
-const AUTH_ERRORS = {
+export const AUTH_ERRORS = {
   UNAUTHORIZED: {
     code: "AUTH_ERR_001",
     message: "You have To Login First.",
@@ -34,25 +34,33 @@ const AUTH_ERRORS = {
   },
 } as const;
 
-const VALIDATION_AND_DB_ERRORS = {
+export const VALIDATION_AND_DB_ERRORS = {
   VALIDATION_ERROR: {
     code: "VAL_ERR_001",
-    message: "Invalid Credentials.",
+    message: "The provided data is invalid.",
     status: 400,
   },
   NOT_FOUND: {
     code: "RES_ERR_001",
     message: "Not Found.",
-    status: 401,
+    status: 404,
   },
   DUPLICATE_ENTRY: {
     code: "RES_ERR_002",
     message: "This Information Has Already Been Recorded In The System.",
-    status: 401,
+    status: 409,
   },
 } as const;
 
-const BUSINESS_ERRORS = {
+export const CLIENT_ERRORS = {
+  NETWORK_ERROR: {
+    code: "NET_ERR_001",
+    message: "Unable to connect to the server",
+    status: 0,
+  },
+} as const;
+
+export const BUSINESS_ERRORS = {
   INSUFFICIENT_FUNDS: {
     code: "PAY_ERR_001",
     message: "Not Enough Balance",
@@ -77,7 +85,7 @@ const BUSINESS_ERRORS = {
   CATEGORY_NOT_FOUND: {
     code: "CAT_ERR_002",
     message: "Category not found",
-    status: 400,
+    status: 404,
   },
   CARD_NOT_FOUND: {
     code: "CARD_ERR_002",
@@ -89,6 +97,7 @@ const BUSINESS_ERRORS = {
 export const ERROR_CODES = {
   ...SYSTEM_ERRORS,
   ...AUTH_ERRORS,
+  ...CLIENT_ERRORS,
   ...VALIDATION_AND_DB_ERRORS,
   ...BUSINESS_ERRORS,
 } as const;

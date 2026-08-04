@@ -22,7 +22,7 @@ export const actionErrorHandler = (error: unknown): ActionResponse<never> => {
     throw error;
   }
 
-  console.log("[SERVER_ACTION_ERROR]:", error);
+  console.error("[SERVER_ACTION_ERROR]:", error);
 
   if (error instanceof ZodError) {
     const formattedErrors: FieldErrors = z.flattenError(error)
@@ -32,7 +32,7 @@ export const actionErrorHandler = (error: unknown): ActionResponse<never> => {
       error: {
         code: ERROR_CODES.VALIDATION_ERROR.code,
         statusCode: ERROR_CODES.VALIDATION_ERROR.status,
-        message: "",
+        message: "Check the form for errors and try again.",
         details: formattedErrors,
       },
     };
@@ -45,7 +45,7 @@ export const actionErrorHandler = (error: unknown): ActionResponse<never> => {
         code: error.code,
         message: error.message,
         statusCode: error.statusCode,
-        details: error.details || null,
+        details: error.details ?? null,
       },
     };
   }
