@@ -1,17 +1,11 @@
 import Transactions from "@/components/application/transactions/Transactions";
-import { redirect } from "next/navigation";
-import { getSession } from "@/lib/auth-helpers";
-import { getTransactions, Query } from "@/actions/transactions/transactions";
+import { getTransactions, Query } from "@/lib/queries/transactions.queries";
 
 type Props = {
   searchParams: Promise<Query>;
 };
 
 const TransactionComponent = async ({ searchParams }: Props) => {
-  const session = await getSession();
-  if (!session || !session.user.id) {
-    redirect("/login");
-  }
   const query = await searchParams;
   const transactions = await getTransactions(query);
 
