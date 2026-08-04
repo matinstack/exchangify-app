@@ -1,0 +1,2 @@
+CREATE TYPE "public"."priority_enum" AS ENUM('LOW', 'MEDIUM', 'HIGH', 'URGENT');--> statement-breakpoint
+CREATE TYPE "public"."report_status_enum" AS ENUM('PENDING', 'IN_PROGRESS', 'RESOLVED', 'REJECTED');
