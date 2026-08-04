@@ -272,6 +272,7 @@ export const handleTransaction = createAction(
           .values({
             userId: id,
             cardId,
+            cardCurrency: card[0].cardCurrency,
             rialAmount,
             euroAmount,
             usdAmount,

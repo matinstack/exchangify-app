@@ -27,6 +27,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { handleTransaction } from "@/actions/transactions/handleTransactions";
 import { toast } from "sonner";
 import { handleAction } from "@/lib/errors/runAction";
+import { formatCardNumber } from "@/lib/card-number-formatter";
+import { NumericFormat } from "react-number-format";
 
 const NewTransactionForm = ({
   categories,
@@ -46,7 +48,11 @@ const NewTransactionForm = ({
     resolver: zodResolver(NewTransactionSchema),
     defaultValues: {
       cardId: defaultValues?.cardId ?? "",
-      amount: defaultValues?.amount ?? "",
+      amount:
+        (defaultValues?.rialAmount ||
+          defaultValues?.usdAmount ||
+          defaultValues?.euroAmount) ??
+        "",
       transactionType:
         defaultValues?.type ??
         ("" as unknown as NewTransactionsType["transactionType"]),
@@ -86,7 +92,10 @@ const NewTransactionForm = ({
   const onSubmit = async (values: NewTransactionsType) => {
     const isSame =
       values.cardId === defaultValues?.cardId &&
-      values.amount === defaultValues?.amount &&
+      values.amount ===
+        (defaultValues?.rialAmount ||
+          defaultValues?.usdAmount ||
+          defaultValues?.euroAmount) &&
       values.transactionType === defaultValues?.type &&
       values.categoryId === defaultValues?.categoryId &&
       values.subCategoryId === defaultValues?.subCategoryId &&
@@ -120,11 +129,11 @@ const NewTransactionForm = ({
           <Controller
             render={({ field }) => (
               <Select
-                disabled={isSubmitting}
+                disabled={!!defaultValues?.cardId || isSubmitting}
                 value={field.value}
                 onValueChange={field.onChange}
               >
-                <SelectTrigger>
+                <SelectTrigger disabled={!!defaultValues?.cardId}>
                   <SelectValue placeholder={"Select A Card"} />
                 </SelectTrigger>
                 <SelectContent>
@@ -133,7 +142,8 @@ const NewTransactionForm = ({
                       <SelectItem key={card.id} value={card.id}>
                         {card.name}
                         <span className="text-xs pl-2">
-                          {`${card.number.slice(0, 4)} **** **** ${card.number.slice(-4)}`}
+                          {formatCardNumber(card.number)}
+                          {/*{`${card.number.slice(0, 4)} **** **** ${card.number.slice(-4)}`}*/}
                         </span>
                       </SelectItem>
                     ))}
@@ -271,14 +281,23 @@ const NewTransactionForm = ({
         </Field>
         <Field data-invalid={!!errors.amount} className="md:col-span-1">
           <FieldLabel>Amount</FieldLabel>
-
-          <Input
-            type="number"
-            placeholder="e.g. 250000"
-            {...register("amount")}
-            disabled={isSubmitting}
+          <Controller
+            control={control}
+            name="amount"
+            render={({ field }) => (
+              <NumericFormat
+                thousandSeparator=","
+                allowNegative={false}
+                value={field.value ?? ""}
+                onValueChange={(values) => {
+                  field.onChange(values.value);
+                }}
+                customInput={Input}
+                placeholder="125,000,000"
+                disabled={isSubmitting}
+              />
+            )}
           />
-
           {errors.amount && <FieldError>{errors.amount.message}</FieldError>}
         </Field>
         <Field data-invalid={!!errors.date} className="md:col-span-1">

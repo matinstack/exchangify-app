@@ -1,7 +1,6 @@
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CARD_THEMES_ARRAY } from "@/constants/card-themes";
-import { Button } from "@/components/ui/button";
 import { PatternFormat, NumericFormat } from "react-number-format";
 import {
   Field,
@@ -10,14 +9,6 @@ import {
   FieldLabel,
   FieldError,
 } from "@/components/ui/field";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { NewCardSchema, NewCardSchemaType } from "@/schema/cards";
 import {
@@ -34,6 +25,7 @@ import { handleNewCard } from "@/actions/cards/handleNewCard";
 import FormSubmitButton from "@/components/shared/FormSubmitButton";
 import { handleAction } from "@/lib/errors/runAction";
 import { CardsType } from "@/db/schema";
+import { useEffect } from "react";
 const bankTypeItems = [
   { label: "Iranian Bank", value: "iranianBank" },
   { label: "Visa", value: "visa" },
@@ -52,29 +44,23 @@ const currencyItems = [
     symbol: "$",
   },
   {
-    label: "British Pound",
-    value: "GBP",
-    symbol: "£",
-  },
-  {
     label: "Iranian Rial",
     value: "IRR",
     symbol: "﷼",
-  },
-  {
-    label: "UAE Dirham",
-    value: "AED",
-    symbol: "د.إ",
-  },
-  {
-    label: "Turkish Lira",
-    value: "TRY",
-    symbol: "₺",
   },
 ];
 
 type Props = {
   card?: CardsType;
+};
+const formatInitialBalance = (balance?: string | null, currency?: string) => {
+  if (!balance) return "";
+
+  if (currency === "IRR" || balance.endsWith(".00")) {
+    return Math.floor(parseFloat(balance)).toString();
+  }
+
+  return balance;
 };
 
 const AddNewCardForm = ({ card }: Props) => {
@@ -82,6 +68,7 @@ const AddNewCardForm = ({ card }: Props) => {
     register,
     control,
     reset,
+    setValue,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<NewCardSchemaType>({
@@ -89,7 +76,7 @@ const AddNewCardForm = ({ card }: Props) => {
     defaultValues: {
       cardNumber: card?.cardNumber ?? "",
       bankName: card?.bankName ?? "",
-      balance: card?.balance ?? "",
+      balance: formatInitialBalance(card?.balance, card?.currency),
       currency:
         card?.currency ?? ("" as unknown as NewCardSchemaType["currency"]),
       cardType: card?.type ?? ("" as unknown as NewCardSchemaType["cardType"]),
@@ -98,11 +85,43 @@ const AddNewCardForm = ({ card }: Props) => {
     },
   });
 
+  const selectedCurrency = useWatch({ control, name: "currency" });
+  const selectedCardType = useWatch({ control, name: "cardType" });
+
+  const filteredCurrencies = currencyItems.filter((item) => {
+    if (selectedCardType === "iranianBank") {
+      return item.value === "IRR";
+    }
+    if (selectedCardType === "visa" || selectedCardType === "masterCard") {
+      return item.value === "USD" || item.value === "EUR";
+    }
+    return true;
+  });
+  const isCurrencyDisabled =
+    !!card?.currency || isSubmitting || selectedCardType === "iranianBank";
+  useEffect(() => {
+    if (!selectedCardType) return;
+
+    if (selectedCardType === "iranianBank") {
+      setValue("currency", "IRR", { shouldValidate: true });
+    } else if (
+      selectedCardType === "visa" ||
+      selectedCardType === "masterCard"
+    ) {
+      // اگر روی ویزا یا مسترکارت رفت و مقدار قبلی IRR بود، مقدار را ریست کن
+      if (selectedCurrency === "IRR") {
+        setValue("currency", "" as any, { shouldValidate: true });
+      }
+    }
+  }, [selectedCardType, setValue]); // selectedCurrency را از dependency حذف کردیم تا اثر جانبی نداشته باشد
+
+  const decimalScale = selectedCurrency === "IRR" ? 0 : 2;
   const onSubmit = async (values: NewCardSchemaType) => {
+    const initialBalance = formatInitialBalance(card?.balance, card?.currency);
     const isSame =
       values.cardNumber === card?.cardNumber &&
       values.bankName === card?.bankName &&
-      values.balance === card?.balance &&
+      values.balance === initialBalance &&
       values.currency === card?.currency &&
       values.cardType === card?.type &&
       values.optionalName === card?.customName &&
@@ -110,6 +129,16 @@ const AddNewCardForm = ({ card }: Props) => {
 
     if (isSame) {
       return toast.info("No changes detected.", { position: "top-center" });
+    }
+
+    if (
+      card?.balance &&
+      formatInitialBalance(card.balance) !== values.balance
+    ) {
+      console.log(values);
+      console.log(card?.balance, values.balance);
+      toast.info("Balance cannot be updated.", { position: "top-center" });
+      return;
     }
     const type = card ? "update" : "create";
     let res;
@@ -119,8 +148,9 @@ const AddNewCardForm = ({ card }: Props) => {
     } else {
       res = await handleAction(handleNewCard(values, type));
     }
-    if (!res.success) return;
-    toast.success(res.data.message, { position: "top-center" });
+    if (!res.success)
+      toast.error(res.error.message, { position: "top-center" });
+    else toast.success(res.data.message, { position: "top-center" });
     reset();
   };
 
@@ -190,7 +220,7 @@ const AddNewCardForm = ({ card }: Props) => {
             name="cardType"
             render={({ field }) => (
               <Select
-                disabled={isSubmitting}
+                disabled={!!card?.type || isSubmitting}
                 value={field.value}
                 onValueChange={field.onChange}
               >
@@ -201,7 +231,11 @@ const AddNewCardForm = ({ card }: Props) => {
                   <SelectGroup>
                     <SelectLabel>Bank Type</SelectLabel>
                     {bankTypeItems.map((type) => (
-                      <SelectItem key={type.label} value={type.value}>
+                      <SelectItem
+                        disabled={!!card?.type || isSubmitting}
+                        key={type.label}
+                        value={type.value}
+                      >
                         {type.label}
                       </SelectItem>
                     ))}
@@ -220,7 +254,9 @@ const AddNewCardForm = ({ card }: Props) => {
             name="currency"
             render={({ field }) => (
               <Select
-                disabled={isSubmitting}
+                disabled={
+                  !!card?.currency || isCurrencyDisabled || isSubmitting
+                }
                 value={field.value}
                 onValueChange={field.onChange}
               >
@@ -230,7 +266,7 @@ const AddNewCardForm = ({ card }: Props) => {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Bank Type</SelectLabel>
-                    {currencyItems.map((currency) => (
+                    {filteredCurrencies.map((currency) => (
                       <SelectItem key={currency.value} value={currency.value}>
                         <div className="flex items-center gap-2">
                           <span>{currency.symbol}</span>
@@ -253,14 +289,24 @@ const AddNewCardForm = ({ card }: Props) => {
             render={({ field }) => (
               <NumericFormat
                 thousandSeparator=","
+                decimalScale={decimalScale} // اگر IRR باشد اعشار را قفل می‌کند (0) وگرنه 2 اعشار می‌دهد
+                fixedDecimalScale={false}
                 allowNegative={false}
                 value={field.value ?? ""}
                 onValueChange={(values) => {
                   field.onChange(values.value);
                 }}
                 customInput={Input}
-                placeholder="125,000,000"
+                placeholder={
+                  selectedCurrency === "IRR" ? "125,000,000" : "1,250.50"
+                }
+                readOnly={!!card?.balance}
                 disabled={isSubmitting}
+                className={
+                  !!card?.balance
+                    ? "opacity-60 cursor-not-allowed bg-muted"
+                    : ""
+                }
               />
             )}
           />

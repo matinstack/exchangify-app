@@ -8,6 +8,8 @@ import {
   BanknoteArrowUp,
   HandCoins,
 } from "lucide-react";
+import { late } from "zod/v3";
+import { th } from "zod/v4/locales";
 
 export type CardsData = {
   balance: string;
@@ -29,13 +31,45 @@ async function Cards() {
     lastMonthExpenses: data.data.expenses.lastMonthExpenses,
     defaultCurrency: data.data.defaultCurrency,
   };
-  console.log(formatCurrency(cardsData.balance, cardsData.defaultCurrency));
+  console.log(cardsData.thisMonthIncomes);
+  console.log(cardsData.lastMonthIncomes);
+  function getPercentageChange(lastMonth: number, thisMonth: number) {
+    if (lastMonth === 0) {
+      return {
+        percent: 0,
+        increased: thisMonth > 0,
+        comparable: false,
+      };
+    }
+
+    const percent = ((thisMonth - lastMonth) / lastMonth) * 100;
+
+    return {
+      percent: Math.abs(percent),
+      increased: percent >= 0,
+      comparable: true,
+    };
+  }
+
+  const expenseComparison = getPercentageChange(
+    Number(cardsData.lastMonthExpenses),
+    Number(cardsData.thisMonthExpenses),
+  );
+
+  const incomeComparison = getPercentageChange(
+    Number(cardsData.lastMonthIncomes),
+    Number(cardsData.thisMonthIncomes),
+  );
+
+  const expenseHasProfit = expenseComparison.increased;
+  const incomeHasProfit = incomeComparison.increased;
+
   return (
     <ul className={"grid 2xl:grid-cols-4 md:grid-cols-2 gap-7 "}>
       <CardsWrapper
         type={"regularCard"}
-        footer={"6% more than last month"}
-        footerIcon={<TrendingUpIcon />}
+        footer={""}
+        footerIcon={""}
         icon={<WalletMinimal />}
         header={"Account Balance"}
         amount={formatCurrency(cardsData.balance, cardsData.defaultCurrency)}
@@ -43,7 +77,13 @@ async function Cards() {
       />
       <CardsWrapper
         type={"regularCard"}
-        footer={"2% less than last month"}
+        footer={
+          expenseComparison.comparable
+            ? `${expenseComparison.percent.toFixed(1)}% ${
+                expenseComparison.increased ? "more" : "less"
+              } than last month`
+            : "No data from last month"
+        }
         footerIcon={<TrendingUpIcon />}
         icon={<HandCoins />}
         header={"Monthly Expenses"}
@@ -51,19 +91,27 @@ async function Cards() {
           cardsData.thisMonthExpenses,
           cardsData.defaultCurrency,
         )}
-        hasProfit
+        hasProfit={expenseHasProfit}
       />
       <CardsWrapper
         type={"regularCard"}
-        footer={"6% more than last month"}
-        footerIcon={<TrendingDownIcon />}
-        icon={<BanknoteArrowUp />}
+        footer={
+          incomeComparison.comparable
+            ? `${incomeComparison.percent.toFixed(1)}% ${
+                incomeComparison.increased ? "more" : "less"
+              } than last month`
+            : "No data from last month"
+        }
+        footerIcon={
+          incomeComparison.increased ? <TrendingUpIcon /> : <TrendingDownIcon />
+        }
+        icon={<BanknoteArrowUp className="text-income!" />}
         header={"Monthly Incomes"}
         amount={formatCurrency(
           cardsData.thisMonthIncomes,
           cardsData.defaultCurrency,
         )}
-        hasProfit={false}
+        hasProfit={incomeHasProfit}
       />
       <CardsWrapper
         type={"regularCard"}

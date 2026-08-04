@@ -21,6 +21,7 @@ export const transactions = pgTable("transactions", {
   cardId: uuid("card_id")
     .notNull()
     .references(() => cards.id, { onDelete: "set null" }),
+  cardCurrency: currencyEnum("card_currency").notNull(),
   rialAmount: numeric("rial_amount", { scale: 2, precision: 14 }).notNull(),
   usdAmount: numeric("usd_amount", { scale: 2, precision: 14 }).notNull(),
   euroAmount: numeric("euro_amount", { scale: 2, precision: 14 }).notNull(),

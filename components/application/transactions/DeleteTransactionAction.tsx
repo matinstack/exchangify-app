@@ -13,12 +13,20 @@ import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { handleAction } from "@/lib/errors/runAction";
+import { formatCurrency } from "@/lib/format-currency";
 
 function DeleteTransactionAction({
   transaction,
   isOpen,
   setIsOpen,
 }: TransactionDialogProps) {
+  const cardAmount =
+    transaction.cardCurrency === "EUR"
+      ? transaction.euroAmount
+      : transaction.cardCurrency === "USD"
+        ? transaction.usdAmount
+        : transaction.rialAmount;
+
   const handleDelete = async () => {
     const res = await handleAction(deleteTransactionById(transaction.id));
     if (!res.success) {
@@ -30,7 +38,6 @@ function DeleteTransactionAction({
     setIsOpen(false);
     return;
   };
-
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-xl">
@@ -57,10 +64,7 @@ function DeleteTransactionAction({
           <div className="flex justify-between items-center">
             <span className="text-muted-foreground">Amount</span>
             <span className="font-semibold text-base text-foreground">
-              $
-              {new Intl.NumberFormat("en-US").format(
-                Number(transaction.amount),
-              )}
+              {formatCurrency(Number(cardAmount), transaction.cardCurrency!)}
             </span>
           </div>
           <div className="flex justify-between items-center">

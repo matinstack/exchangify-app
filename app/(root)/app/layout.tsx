@@ -3,7 +3,6 @@ import Sidebar from "@/components/application/sidebar/Sidebar";
 import Header from "@/components/application/header/Header";
 import Logo from "@/components/shared/Logo";
 import HeaderSkeleton from "@/components/application/header/HeaderSkeleton";
-
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex h-screen bg-background">

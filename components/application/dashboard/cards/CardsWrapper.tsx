@@ -39,7 +39,7 @@ function CardsWrapper(props: Card | GoalCard) {
             </h5>
             <DropDownMenuCard />
           </div>
-          <p className={"pl-4 text-3xl font-normal"}>$ {props.amount}</p>
+          <p className={"pl-4 text-3xl font-normal"}>{props.amount}</p>
           <p
             className={`flex ${props.hasProfit ? "text-income" : "text-expense"} gap-2 text-xs font-normal items-center`}
           >

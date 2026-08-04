@@ -19,6 +19,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { getRecentTransactionsData } from "@/actions/dashboard/dashboard";
 import { type TransactionsType } from "@/db/schema";
 import ExpenseTypeIcon from "@/components/shared/expense-type-icon";
+import { formatCurrency } from "@/lib/format-currency";
 
 type Categories = {
   id: string;
@@ -28,17 +29,15 @@ type Categories = {
 };
 
 async function RecentExpensesTable() {
-  let tableData: null[] | TransactionsType[] = [];
-  let categories: [] | Categories[];
   const transactions = await getRecentTransactionsData();
-  if (transactions.success && transactions.data) {
-    tableData = transactions.data.transactionsData;
-    categories = transactions.data.categoriesData;
-  }
+
+  if (!transactions || !transactions.success || !transactions.data) return null;
+
+  const tableData: TransactionsType[] = transactions.data.transactionsData;
+  const categories: Categories[] = transactions.data.categoriesData;
+
   return (
-    <div
-      className={"bg-card border pb-2  border-border rounded-lg shadow-xs  "}
-    >
+    <div className="bg-card border pb-2 border-border rounded-lg shadow-xs">
       <h6 className="text-md flex gap-4 pl-8 py-4 mt-2">
         <ArrowLeftRight className="text-brand" />
         Recent Transactions
@@ -46,7 +45,7 @@ async function RecentExpensesTable() {
       <ScrollArea className="overflow-y-auto h-50">
         {tableData.length > 0 ? (
           <div className="mx-8">
-            <Table className="">
+            <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[10%]">Type</TableHead>
@@ -58,25 +57,38 @@ async function RecentExpensesTable() {
                 </TableRow>
               </TableHeader>
 
-              <TableBody className={"h-fit  max-h-36 overflow-y-auto"}>
-                {tableData.map((tra, i) => {
-                  const isExpense = tra?.transactionType === "expense";
+              <TableBody className="h-fit max-h-36 overflow-y-auto">
+                {tableData.map((tra) => {
+                  const amountType =
+                    tra.cardCurrency === "EUR"
+                      ? tra.euroAmount
+                      : tra.cardCurrency === "USD"
+                        ? tra.usdAmount
+                        : tra.rialAmount;
 
-                  const { name: subCategory, parentId } =
-                    categories.find((cat) => cat.id === tra?.categoryId) ?? {};
+                  const safeAmount = Number(amountType) || 0;
+
+                  const isExpense = tra.transactionType === "expense";
+
+                  const { name: subCategory, parentId } = categories.find(
+                    (cat) => cat.id === tra.categoryId,
+                  ) ?? { name: "N/A", parentId: null };
 
                   const category = categories.find(
                     (cat) => cat.id === parentId,
                   )?.name;
+
                   return (
-                    <TableRow key={tra?.id}>
+                    <TableRow key={tra.id}>
                       <TableCell>
                         <ExpenseTypeIcon isExpense={isExpense} />
                       </TableCell>
-                      <TableCell>$ {tra?.amount}</TableCell>
+                      <TableCell>
+                        {formatCurrency(safeAmount, tra.cardCurrency)}
+                      </TableCell>
                       <TableCell>{category}</TableCell>
                       <TableCell>{subCategory}</TableCell>
-                      <TableCell>{tra?.date.toDateString()}</TableCell>
+                      <TableCell>{tra.date.toDateString()}</TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -104,7 +116,7 @@ async function RecentExpensesTable() {
           <div className="flex flex-col gap-4 justify-center items-center text-xl font-semibold">
             <div>You have no recent transactions</div>
             <div className="text-sm text-foreground/50 font-normal">
-              For see this chart go make your first tranaction.
+              For see this chart go make your first transaction.
             </div>
           </div>
         )}

@@ -2,11 +2,12 @@
 
 import { getSession } from "@/lib/auth-helpers";
 import { db } from "@/db";
-import { cards, transactions, userSettings } from "@/db/schema";
-import { and, eq, sql } from "drizzle-orm";
+import { cards, categories, transactions, userSettings } from "@/db/schema";
+import { and, asc, eq, or, sql } from "drizzle-orm";
 import { createAction } from "@/lib/errors/error-handler";
 import { AppError } from "@/lib/errors/AppError";
 import { todayCurrency } from "@/db/schema/todayCurrency";
+import { ca } from "zod/v4/locales";
 
 export const getDashboardCardsData = createAction(async () => {
   const session = await getSession();
@@ -191,27 +192,30 @@ export const getTopCategoryChartData = async () => {
 };
 
 export const getRecentTransactionsData = createAction(async () => {
-  // const session = await getSession();
-  // const id = session.user.id;
-  // const [transactionsData, categoriesData] = await Promise.all([
-  //   db
-  //     .select()
-  //     .from(transactions)
-  //     .where(and(eq(transactions.userId, id)))
-  //     .orderBy(asc(transactions.date))
-  //     .limit(5),
-  //   db
-  //     .select({
-  //       id: categories.id,
-  //       parentId: categories.parentId,
-  //       name: categories.name,
-  //       type: categories.type,
-  //     })
-  //     .from(categories)
-  //     .where(or(eq(categories.userId, id), eq(categories.isDefault, true))),
-  // ]);
-  // return {
-  //   transactionsData,
-  //   categoriesData,
-  // };
+  const session = await getSession();
+  const id = session.user.id;
+  const [transactionsData, categoriesData] = await Promise.all([
+    db
+      .select()
+      .from(transactions)
+      .where(and(eq(transactions.userId, id)))
+      .orderBy(asc(transactions.date))
+      .limit(5),
+    db
+      .select({
+        id: categories.id,
+        parentId: categories.parentId,
+        name: categories.name,
+        type: categories.type,
+      })
+      .from(categories)
+      .where(or(eq(categories.userId, id), eq(categories.isDefault, true))),
+  ]);
+
+  if (!transactionsData || !categoriesData)
+    throw new AppError("INTERNAL_ERROR");
+  return {
+    transactionsData,
+    categoriesData,
+  };
 });

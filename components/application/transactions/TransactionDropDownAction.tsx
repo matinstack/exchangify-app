@@ -94,7 +94,10 @@ function TransactionEditFormDialog({
   const { cards, success, subCategories, categories } = editTransactionData;
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent>
+      <DialogContent
+        className="md:max-w-xl"
+        onPointerDownOutside={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>Edit Transaction</DialogTitle>
           <DialogDescription>

@@ -76,7 +76,7 @@ const TransactionsTable = ({ data }: Props) => {
                     className={`font-semibold ${!isExpense && "text-income"}`}
                   >
                     {isExpense ? "-" : "+"}{" "}
-                    {formatCurrency(Number(amount), item.cardCurrency)}
+                    {formatCurrency(Number(amount), item.cardCurrency!)}
                   </TableCell>
                   <TableCell>
                     <p>{item.bankName}</p>
