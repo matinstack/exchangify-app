@@ -120,6 +120,27 @@
       "when": 1785838362081,
       "tag": "0016_fine_magma",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1785857440382,
+      "tag": "0017_short_wasp",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1785857467751,
+      "tag": "0018_sad_famine",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1785857810829,
+      "tag": "0019_shallow_whirlwind",
+      "breakpoints": true
     }
   ]
 }
