@@ -11,8 +11,10 @@ import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
 import { RegisterAction } from "@/actions/auth/Register";
 import { handleAction } from "@/lib/errors/runAction";
+import { useRouter } from "next/navigation";
 
 const RegisterForm = () => {
+  const router = useRouter();
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [showPassword, setShowPassword] = useState({
     password: false,
@@ -45,6 +47,7 @@ const RegisterForm = () => {
     }
     reset();
     toast.success("Account successfully registered!");
+    router.push("/app/dashboard");
   };
 
   return (

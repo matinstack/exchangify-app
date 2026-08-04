@@ -11,8 +11,10 @@ import { LoginAction } from "@/actions/auth/Login";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
 import { handleAction } from "@/lib/errors/runAction";
+import { useRouter } from "next/navigation";
 
-const RegisterForm = () => {
+const LoginForm = () => {
+  const router = useRouter();
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [showPassword, setShowPassword] = useState({
     password: false,
@@ -41,8 +43,10 @@ const RegisterForm = () => {
       toast.error(res.error.message, { position: "top-center" });
       return;
     }
+
     toast.success("Successfully Logged in!", { position: "top-center" });
     reset();
+    router.push("/app/dashboard");
   };
 
   return (
@@ -117,4 +121,4 @@ const RegisterForm = () => {
   );
 };
 
-export default RegisterForm;
+export default LoginForm;

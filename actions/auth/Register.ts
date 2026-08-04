@@ -6,6 +6,8 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { logActivity } from "@/lib/log-activity";
 import { createAction } from "@/lib/errors/error-handler";
+import { db } from "@/db";
+import { userSettings } from "@/db/schema";
 export const RegisterAction = createAction(
   async (values: RegisterSchemaType) => {
     const { email, password, name, lastName } = RegisterSchema.parse(values);
@@ -23,13 +25,18 @@ export const RegisterAction = createAction(
       headers: await headers(),
     });
 
+    await db.insert(userSettings).values({
+      userId: res.user.id,
+      currency: "USD",
+      language: "en",
+      timezone: "Asia/Tehran",
+    });
+
     await logActivity({
       userId: res.user.id,
       action: "signup",
       entityType: "user",
       metadata: { email },
     });
-
-    redirect("/app/dashboard");
   },
 );

@@ -29,8 +29,6 @@ async function Cards() {
     lastMonthExpenses: data.data.expenses.lastMonthExpenses,
     defaultCurrency: data.data.defaultCurrency,
   };
-  console.log(cardsData.thisMonthIncomes);
-  console.log(cardsData.lastMonthIncomes);
   function getPercentageChange(lastMonth: number, thisMonth: number) {
     if (lastMonth === 0) {
       return {

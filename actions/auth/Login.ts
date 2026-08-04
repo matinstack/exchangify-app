@@ -22,6 +22,4 @@ export const LoginAction = createAction(async (values: LoginSchemaType) => {
     entityType: "user",
     entityId: res.user.id,
   });
-
-  redirect("/app/dashboard");
 });
