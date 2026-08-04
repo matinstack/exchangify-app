@@ -1,6 +1,6 @@
 import ActivityLog from "@/components/application/activity-log/ActivityLog";
 import { Suspense } from "react";
-import { ActivityQuery } from "@/actions/activity-log/activity-log";
+import { ActivityQuery } from "@/lib/queries/activity-log.queries";
 
 type Props = {
   searchParams: Promise<ActivityQuery>;

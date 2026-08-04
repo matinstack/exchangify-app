@@ -1,6 +1,3 @@
-import React from "react";
-import Logo from "@/components/shared/Logo";
-
 const Header = ({ title, subTitle }: { title: string; subTitle?: string }) => {
   return (
     <header className={"flex flex-col mb-6 gap-6"}>

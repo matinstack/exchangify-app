@@ -8,9 +8,9 @@ import MobileSidebar from "@/components/application/header/MobileSidebar";
 import Logo from "@/components/shared/Logo";
 
 const Header = async () => {
-  const session = await getSession();
-  if (!session || !session.user.id) redirect("/auth/login");
-  const { name, lastName } = session.user;
+  // const session = await getSession();
+  // if (!session || !session.user.id) redirect("/auth/login");
+  // const { name, lastName } = session.user;
   return (
     <header className={"flex justify-between items-center md:py-5 py-3 px-8"}>
       <div>
@@ -19,7 +19,7 @@ const Header = async () => {
         </div>
         <div className=" md:mt-0 hidden md:space-y-2 md:block">
           <h1 className="hidden md:block   text-lg md:text-2xl font-normal">
-            Welcome {name} {lastName} 👋
+            {/*Welcome {name} {lastName} 👋*/}
           </h1>
           <HeaderTitle />
         </div>

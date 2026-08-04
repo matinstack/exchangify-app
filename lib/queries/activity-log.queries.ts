@@ -1,5 +1,4 @@
-"use server";
-import { DateFilter } from "@/actions/transactions/transactions";
+import { DateFilter } from "@/lib/queries/transactions.queries";
 import { getSession } from "@/lib/auth-helpers";
 import { and, between, count, eq } from "drizzle-orm";
 import { ActivityLog } from "@/db/schema";

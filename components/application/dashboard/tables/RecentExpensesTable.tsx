@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ArrowLeftRight, MoreVertical } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { getRecentTransactionsData } from "@/actions/dashboard/dashboard";
+import { getRecentTransactionsData } from "@/lib/queries/dashboard.queries";
 import { type TransactionsType } from "@/db/schema";
 import ExpenseTypeIcon from "@/components/shared/expense-type-icon";
 import { formatCurrency } from "@/lib/format-currency";

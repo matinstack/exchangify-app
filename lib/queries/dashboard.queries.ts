@@ -1,5 +1,3 @@
-"use server";
-
 import { getSession } from "@/lib/auth-helpers";
 import { db } from "@/db";
 import { cards, categories, transactions, userSettings } from "@/db/schema";
@@ -7,7 +5,6 @@ import { and, asc, eq, or, sql } from "drizzle-orm";
 import { createAction } from "@/lib/errors/error-handler";
 import { AppError } from "@/lib/errors/AppError";
 import { todayCurrency } from "@/db/schema/todayCurrency";
-import { ca } from "zod/v4/locales";
 
 export const getDashboardCardsData = createAction(async () => {
   const session = await getSession();
@@ -120,13 +117,12 @@ export const getDashboardCardsData = createAction(async () => {
   };
 });
 export const getMonthlyReportDataChart = async () => {
-  const session = await getSession();
+  // const session = await getSession();
   //   if (!session || !session.user.id) {
   //     throw new Error("Unauthorized");
   //   }
   //   const { id } = session.user;
   //   const month = sql<string>`to_char(${transactions.date}, 'YYYY-MM')`;
-
   //   const income = sql<number>`
   //     sum(
   //       case
@@ -145,7 +141,6 @@ export const getMonthlyReportDataChart = async () => {
   //       end
   //     )
   // `;
-
   //   try {
   //     return await db
   //       .select({

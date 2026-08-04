@@ -1,7 +1,7 @@
 import { getSession } from "@/lib/auth-helpers";
 import { redirect } from "next/navigation";
-import { getActivities } from "@/actions/activity-log/activity-log";
-import { Query } from "@/actions/transactions/transactions";
+import { getActivities } from "@/lib/queries/activity-log.queries";
+import { Query } from "@/lib/queries/transactions.queries";
 import ActivityLogTable from "@/components/application/activity-log/ActivityLogTable";
 
 type Props = {

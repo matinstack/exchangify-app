@@ -1,17 +1,6 @@
-"use server";
 import { db } from "@/db";
-import { ActivityLog, cards, categories, transactions } from "@/db/schema";
-import {
-  and,
-  eq,
-  or,
-  asc,
-  desc,
-  between,
-  count,
-  sql,
-  inArray,
-} from "drizzle-orm";
+import { cards, categories, transactions } from "@/db/schema";
+import { and, eq, or, asc, desc, between, count } from "drizzle-orm";
 import { getSession } from "@/lib/auth-helpers";
 import {
   startOfDay,
@@ -46,11 +35,7 @@ export type Query = {
   dateFilter?: DateFilter;
 };
 
-import {
-  NewTransactionSchema,
-  type NewTransactionsType,
-} from "@/schema/transactions";
-import { cacheLife, cacheTag, updateTag } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 
 async function getTransactionsCached(userId: string, query: Query) {
   "use cache";

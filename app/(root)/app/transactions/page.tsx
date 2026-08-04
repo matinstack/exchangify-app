@@ -1,4 +1,4 @@
-import { type Query } from "@/actions/transactions/transactions";
+import { type Query } from "@/lib/queries/transactions.queries";
 import TransactionComponent from "@/components/application/transactions/TransactionComponent";
 import { Suspense } from "react";
 import TransactionsSkeleton from "@/components/application/transactions/TransactionsSkeleton";

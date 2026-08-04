@@ -1,4 +1,4 @@
-import { getDashboardCardsData } from "@/actions/dashboard/dashboard";
+import { getDashboardCardsData } from "@/lib/queries/dashboard.queries";
 import CardsWrapper from "@/components/application/dashboard/cards/CardsWrapper";
 import { formatCurrency } from "@/lib/format-currency";
 import {
@@ -8,8 +8,6 @@ import {
   BanknoteArrowUp,
   HandCoins,
 } from "lucide-react";
-import { late } from "zod/v3";
-import { th } from "zod/v4/locales";
 
 export type CardsData = {
   balance: string;
@@ -22,7 +20,7 @@ export type CardsData = {
 
 async function Cards() {
   const data = await getDashboardCardsData();
-  if (!data.success) return;
+  if (!data.success) return null;
   const cardsData = {
     balance: data.data.cardBalance,
     thisMonthIncomes: data.data.expenses.thisMonthIncomes,
