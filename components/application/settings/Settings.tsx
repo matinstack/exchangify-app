@@ -2,11 +2,11 @@ import { Suspense } from "react";
 import DarkModeToggle from "@/components/shared/dark-mode-toggle";
 import NewCategoryForm from "@/components/application/settings/NewCategoryForm";
 import NewSubCategoryDialog from "@/components/application/settings/NewSubCategoryDialog";
-import SignOutButton from "@/components/application/settings/SignOutButton";
 import NewSubCategoryDialogSkeleton from "@/components/application/settings/NewSubCategoryDialogSkeleton";
 import { SettingWrapper } from "./SettingWrapper";
 import { Button } from "@/components/ui/button";
 import { SignOutDialog } from "./SignOutDialog";
+import ToggleCurrency from "./ToggleCurrency";
 export const Settings = () => {
   return (
     <div className="flex flex-col gap-14 justify-center items-center py-8">
@@ -15,6 +15,14 @@ export const Settings = () => {
         subTitle="Choose your preferred theme for the application."
       >
         <DarkModeToggle />
+      </SettingWrapper>
+      <SettingWrapper
+        title="Currency"
+        subTitle="You can change your currency here. this will be effact only on your dashboard"
+      >
+        <Suspense fallback={<p>Loading ...</p>}>
+          <ToggleCurrency />
+        </Suspense>
       </SettingWrapper>
       <SettingWrapper
         title="Categories"
