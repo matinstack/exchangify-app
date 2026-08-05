@@ -1,5 +1,6 @@
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -17,8 +18,7 @@ import { formatCurrency } from "@/lib/format-currency";
 
 function DeleteTransactionAction({
   transaction,
-  isOpen,
-  setIsOpen,
+  dialog,
 }: TransactionDialogProps) {
   const cardAmount =
     transaction.cardCurrency === "EUR"
@@ -31,15 +31,15 @@ function DeleteTransactionAction({
     const res = await handleAction(() => deleteTransactionById(transaction.id));
     if (!res.success) {
       toast.error(res.error.message, { position: "top-center" });
-      setIsOpen(false);
+      dialog.close();
       return;
     }
     toast.success(res.data.message, { position: "top-center" });
-    setIsOpen(false);
+    dialog.close();
     return;
   };
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog {...dialog}>
       <DialogContent className="sm:max-w-xl">
         <DialogHeader className="flex flex-col gap-1 text-left">
           <div className="flex items-center gap-2 text-destructive">
@@ -97,13 +97,11 @@ function DeleteTransactionAction({
         </div>
 
         <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
-          <Button
-            variant="outline"
-            onClick={() => setIsOpen(false)}
-            className="w-full sm:w-auto"
-          >
-            Cancel
-          </Button>
+          <DialogClose asChild>
+            <Button variant="outline" className="w-full  sm:w-auto">
+              Cancel
+            </Button>
+          </DialogClose>
           <Button
             variant="destructive"
             onClick={handleDelete}

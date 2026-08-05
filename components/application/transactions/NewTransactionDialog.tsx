@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import NewTransactionForm from "@/components/application/transactions/NewTransactionForm";
 import { TransactionItem } from "@/components/application/transactions/Transactions";
+import { useDialogState } from "@/hooks/use-dialog-state";
 
 type Card = {
   id: string;
@@ -36,10 +37,19 @@ export type NewTransactionDataProps = {
   categories: Category[];
   subCategories: SubCategory[];
   defaultValues?: TransactionItem;
+  onSuccess: () => void;
 };
 
 type NewTransactionDialog = NewTransactionDataProps & {
   success?: boolean;
+};
+
+type Props = {
+  cards: Card[];
+  categories: Category[];
+  subCategories: SubCategory[];
+  defaultValues?: TransactionItem;
+  success: boolean;
 };
 
 const NewTransactionDialog = ({
@@ -47,9 +57,10 @@ const NewTransactionDialog = ({
   categories,
   subCategories,
   success,
-}: NewTransactionDialog) => {
+}: Props) => {
+  const dialog = useDialogState();
   return (
-    <Dialog>
+    <Dialog {...dialog}>
       <DialogTrigger asChild>
         <Button>
           <Plus /> <span className="hidden sm:block">New Transaction</span>
@@ -74,6 +85,7 @@ const NewTransactionDialog = ({
             cards={cards}
             categories={categories}
             subCategories={subCategories}
+            onSuccess={dialog.close}
           />
         )}
       </DialogContent>

@@ -35,6 +35,7 @@ const NewTransactionForm = ({
   subCategories,
   cards,
   defaultValues,
+  onSuccess,
 }: NewTransactionDataProps) => {
   const {
     reset,
@@ -115,10 +116,10 @@ const NewTransactionForm = ({
     } else res = await handleAction(() => handleTransaction(values, "create"));
 
     if (!res.success) {
-      toast.error(res.error.message, { position: "top-center" });
       return;
     }
     toast.success(res.data.message, { position: "top-center" });
+    onSuccess();
   };
 
   return (

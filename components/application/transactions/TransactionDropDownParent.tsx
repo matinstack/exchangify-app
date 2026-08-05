@@ -3,14 +3,14 @@ import { redirect } from "next/navigation";
 import { getNewTransactionDataByUserId } from "@/data/transactions";
 import TransactionDropDownAction from "@/components/application/transactions/TransactionDropDownAction";
 import { TransactionItem } from "@/components/application/transactions/Transactions";
+import { UseDialogState } from "@/hooks/use-dialog-state";
 
 export type TransactionDropDownActionProps = {
   transaction: TransactionItem;
 };
 export type TransactionDialogProps = {
   transaction: TransactionItem;
-  isOpen: boolean;
-  setIsOpen: (open: boolean) => void;
+  dialog: UseDialogState;
 };
 
 const TransactionDropDownParent = async ({

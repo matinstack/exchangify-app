@@ -135,8 +135,6 @@ const AddNewCardForm = ({ card }: Props) => {
       card?.balance &&
       formatInitialBalance(card.balance) !== values.balance
     ) {
-      console.log(values);
-      console.log(card?.balance, values.balance);
       toast.info("Balance cannot be updated.", { position: "top-center" });
       return;
     }
@@ -148,10 +146,11 @@ const AddNewCardForm = ({ card }: Props) => {
     } else {
       res = await handleAction(() => handleNewCard(values, type));
     }
-    if (!res.success)
-      toast.error(res.error.message, { position: "top-center" });
-    else toast.success(res.data.message, { position: "top-center" });
-    reset();
+    if (!res.success) return;
+
+    toast.success(res.data.message, { position: "top-center" });
+    if (!card) reset();
+    else reset(values);
   };
 
   return (

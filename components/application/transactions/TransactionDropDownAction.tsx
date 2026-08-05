@@ -23,6 +23,7 @@ import { TransactionDialogProps } from "@/components/application/transactions/Tr
 import { NewTransactionData } from "@/data/transactions";
 import NewTransactionForm from "@/components/application/transactions/NewTransactionForm";
 import { TransactionItem } from "@/components/application/transactions/Transactions";
+import { useDialogState } from "@/hooks/use-dialog-state";
 
 type TransactionDropDownActionProps = {
   transaction: TransactionItem;
@@ -33,8 +34,8 @@ export default function TransactionDropDownAction({
   transaction,
   editTransactionData,
 }: TransactionDropDownActionProps) {
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isEditFormDialogOpen, setIsEditFormDialogOpen] = useState(false);
+  const editDialog = useDialogState();
+  const deleteDialog = useDialogState();
 
   return (
     <>
@@ -48,7 +49,7 @@ export default function TransactionDropDownAction({
           <DropdownMenuItem
             onSelect={(e) => {
               e.preventDefault();
-              setIsEditFormDialogOpen(true);
+              editDialog.show();
             }}
           >
             <SquarePen />
@@ -58,7 +59,7 @@ export default function TransactionDropDownAction({
           <DropdownMenuItem
             onSelect={(e) => {
               e.preventDefault();
-              setIsDeleteDialogOpen(true);
+              deleteDialog.show();
             }}
             variant="destructive"
           >
@@ -68,14 +69,12 @@ export default function TransactionDropDownAction({
       </DropdownMenu>
       <TransactionEditFormDialog
         transaction={transaction}
-        isOpen={isEditFormDialogOpen}
-        setIsOpen={setIsEditFormDialogOpen}
+        dialog={editDialog}
         editTransactionData={editTransactionData}
       />
       <DeleteTransactionAction
         transaction={transaction}
-        isOpen={isDeleteDialogOpen}
-        setIsOpen={setIsDeleteDialogOpen}
+        dialog={deleteDialog}
       />
     </>
   );
@@ -88,12 +87,11 @@ type Props = TransactionDialogProps & {
 function TransactionEditFormDialog({
   editTransactionData,
   transaction,
-  isOpen,
-  setIsOpen,
+  dialog,
 }: Props) {
-  const { cards, success, subCategories, categories } = editTransactionData;
+  const { cards, subCategories, categories } = editTransactionData;
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog {...dialog}>
       <DialogContent
         className="md:max-w-xl"
         onPointerDownOutside={(e) => e.preventDefault()}
@@ -105,6 +103,7 @@ function TransactionEditFormDialog({
           </DialogDescription>
         </DialogHeader>
         <NewTransactionForm
+          onSuccess={dialog.close}
           cards={cards}
           categories={categories}
           subCategories={subCategories}
