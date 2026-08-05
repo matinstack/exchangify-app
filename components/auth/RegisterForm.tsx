@@ -42,11 +42,10 @@ const RegisterForm = () => {
     const res = await handleAction(() => RegisterAction(data));
     if (!res.success) {
       setIsRedirecting(false);
-      toast.error(res.error.message, { position: "top-center" });
       return;
     }
     reset();
-    toast.success("Account successfully registered!");
+    toast.success(res.data.messagee, { position: "top-center" });
     router.push("/app/dashboard");
   };
 

@@ -22,4 +22,8 @@ export const LoginAction = createAction(async (values: LoginSchemaType) => {
     entityType: "user",
     entityId: res.user.id,
   });
+
+  return {
+    message: "Successfully Logged in",
+  };
 });

@@ -40,11 +40,10 @@ const LoginForm = () => {
 
     if (!res.success) {
       setIsRedirecting(false);
-      toast.error(res.error.message, { position: "top-center" });
       return;
     }
 
-    toast.success("Successfully Logged in!", { position: "top-center" });
+    toast.success(res.data.message, { position: "top-center" });
     reset();
     router.push("/app/dashboard");
   };

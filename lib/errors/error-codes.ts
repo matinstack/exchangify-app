@@ -32,6 +32,11 @@ export const AUTH_ERRORS = {
     message: "Your Session Has Expired. Please Sign In Again.",
     status: 401,
   },
+  EMAIL_IN_USE: {
+    code: "AUTH_ERR_004",
+    message: "Email is already in use.",
+    status: 409,
+  },
 } as const;
 
 export const VALIDATION_AND_DB_ERRORS = {

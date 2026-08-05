@@ -8,6 +8,7 @@ import { logActivity } from "@/lib/log-activity";
 import { createAction } from "@/lib/errors/error-handler";
 import { db } from "@/db";
 import { userSettings } from "@/db/schema";
+import { AppError } from "@/lib/errors/AppError";
 export const RegisterAction = createAction(
   async (values: RegisterSchemaType) => {
     const { email, password, name, lastName } = RegisterSchema.parse(values);
@@ -15,9 +16,7 @@ export const RegisterAction = createAction(
     const existingEmail = await getUserByEmail(email);
 
     if (existingEmail) {
-      return {
-        error: "Email is already in use",
-      };
+      throw new AppError("EMAIL_IN_USE");
     }
 
     const res = await auth.api.signUpEmail({
@@ -38,5 +37,9 @@ export const RegisterAction = createAction(
       entityType: "user",
       metadata: { email },
     });
+
+    return {
+      messagee: "Account registered successfully.",
+    };
   },
 );
