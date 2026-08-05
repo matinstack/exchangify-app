@@ -28,7 +28,7 @@ function DeleteTransactionAction({
         : transaction.rialAmount;
 
   const handleDelete = async () => {
-    const res = await handleAction(deleteTransactionById(transaction.id));
+    const res = await handleAction(() => deleteTransactionById(transaction.id));
     if (!res.success) {
       toast.error(res.error.message, { position: "top-center" });
       setIsOpen(false);

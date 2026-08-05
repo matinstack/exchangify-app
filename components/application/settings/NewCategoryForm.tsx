@@ -98,7 +98,9 @@ const NewCategoryForm = () => {
       }
       setUploading(false);
     }
-    const res = await handleAction(createCategory({ ...values, iconKey }));
+    const res = await handleAction(() =>
+      createCategory({ ...values, iconKey }),
+    );
 
     if (!res.success) {
       toast.error(res.error.message, { position: "top-center" });

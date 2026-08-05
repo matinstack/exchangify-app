@@ -36,7 +36,7 @@ const LoginForm = () => {
 
   const onSubmit = async (data: LoginSchemaType) => {
     setIsRedirecting(true);
-    const res = await handleAction(LoginAction(data));
+    const res = await handleAction(() => LoginAction(data));
 
     if (!res.success) {
       setIsRedirecting(false);

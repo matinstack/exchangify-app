@@ -144,9 +144,9 @@ const AddNewCardForm = ({ card }: Props) => {
     let res;
 
     if (card) {
-      res = await handleAction(handleNewCard(values, type, card.id));
+      res = await handleAction(() => handleNewCard(values, type, card.id));
     } else {
-      res = await handleAction(handleNewCard(values, type));
+      res = await handleAction(() => handleNewCard(values, type));
     }
     if (!res.success)
       toast.error(res.error.message, { position: "top-center" });

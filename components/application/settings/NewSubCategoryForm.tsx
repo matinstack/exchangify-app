@@ -61,7 +61,7 @@ const NewSubCategoryForm = ({ categories }: Props) => {
 
   const onSubmit = async (values: CreateSubCategoryType) => {
     console.log(values);
-    const res = await handleAction(createCategory(values));
+    const res = await handleAction(() => createCategory(values));
 
     if (!res.success) {
       toast.error(res.error.message, { position: "top-center" });

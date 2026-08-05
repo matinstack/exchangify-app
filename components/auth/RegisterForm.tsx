@@ -39,7 +39,7 @@ const RegisterForm = () => {
 
   const onSubmit = async (data: RegisterSchemaType) => {
     setIsRedirecting(true);
-    const res = await handleAction(RegisterAction(data));
+    const res = await handleAction(() => RegisterAction(data));
     if (!res.success) {
       setIsRedirecting(false);
       toast.error(res.error.message, { position: "top-center" });

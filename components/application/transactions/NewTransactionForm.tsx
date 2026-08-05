@@ -109,10 +109,10 @@ const NewTransactionForm = ({
     let res;
 
     if (defaultValues) {
-      res = await handleAction(
+      res = await handleAction(() =>
         handleTransaction(values, "update", defaultValues.id),
       );
-    } else res = await handleAction(handleTransaction(values, "create"));
+    } else res = await handleAction(() => handleTransaction(values, "create"));
 
     if (!res.success) {
       toast.error(res.error.message, { position: "top-center" });

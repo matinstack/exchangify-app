@@ -223,12 +223,15 @@ const DropDownOptions = ({ className, card }: DropDownOptionsProps) => {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   const handleSetDefault = async () => {
-    toast.promise(handleAction(setDefaultCard(card.id)), {
-      loading: "Setting card as default...",
-      success: "Card set as default successfully!",
-      error: "Failed to set default card",
-      position: "top-center",
-    });
+    toast.promise(
+      handleAction(() => setDefaultCard(card.id)),
+      {
+        loading: "Setting card as default...",
+        success: "Card set as default successfully!",
+        error: "Failed to set default card",
+        position: "top-center",
+      },
+    );
   };
 
   return (
@@ -385,7 +388,7 @@ const CardDeleteConfirm = ({
   const [confirmWord, setConfirmWord] = useState("");
   const handleSubmit = async () => {
     if (confirmWord === "Delete Card") {
-      const res = await handleAction(deleteCardAction(cardId));
+      const res = await handleAction(() => deleteCardAction(cardId));
       !res.success
         ? toast.error(res.error.message, { position: "top-center" })
         : toast.success(res.data.message);
